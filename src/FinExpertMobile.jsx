@@ -11,8 +11,17 @@ import BondsPage from './BondsPage.jsx'
 import SavingsPlansPage from './SavingsPlansPage.jsx'
 import LoansPage from './LoansPage.jsx'
 import CreditCardDetailPage from './CreditCardDetailPage.jsx'
+import CreditCardEligibilityPage from './CreditCardEligibilityPage.jsx'
 import EmiCalculatorPage from './EmiCalculatorPage.jsx'
+import HomeLoanPage from './HomeLoanPage.jsx'
+import IncomeTaxCalculatorPage from './IncomeTaxCalculatorPage.jsx'
+import GratuityCalculatorPage from './GratuityCalculatorPage.jsx'
 import SipInvestmentPage from './SipInvestmentPage.jsx'
+import FixedDepositCalculatorPage from './FixedDepositCalculatorPage.jsx'
+import PpfCalculatorPage from './PpfCalculatorPage.jsx'
+import RdCalculatorPage from './RdCalculatorPage.jsx'
+import LumpsumCalculatorPage from './LumpsumCalculatorPage.jsx'
+import GoalPlannerPage from './GoalPlannerPage.jsx'
 import InsuranceExplorerPage from './InsuranceExplorerPage.jsx'
 import PersonalLoanExplorerPage from './PersonalLoanExplorerPage.jsx'
 import CreditCardOffersPage from './CreditCardOffersPage.jsx'
@@ -31,8 +40,10 @@ import LoginPage from './LoginPage.jsx'
 import SignupPage from './SignupPage.jsx'
 import ForgotPasswordPage from './ForgotPasswordPage.jsx'
 import OtpLoginPage from './OtpLoginPage.jsx'
+import VerifyDetailsPage from './VerifyDetailsPage.jsx'
 import TermsConditionsPage from './TermsConditionsPage.jsx'
 import PrivacyPolicyPage from './PrivacyPolicyPage.jsx'
+import TaxationScreen from './TaxationScreen.jsx'
 
 const FE_QUICK_UNSPLASH = {
   mutualFunds:
@@ -190,15 +201,15 @@ function StoryAvatarImg({ name, src, className, width, height, loading }) {
   )
 }
 
-function NavIcon({ name }) {
+function NavIcon({ name, size = 22, strokeWidth: sw = 2 }) {
   const common = {
     xmlns: 'http://www.w3.org/2000/svg',
     viewBox: '0 0 24 24',
     fill: 'none',
-    width: 22,
-    height: 22,
+    width: size,
+    height: size,
     stroke: 'currentColor',
-    strokeWidth: 2,
+    strokeWidth: sw,
     strokeLinecap: 'round',
     strokeLinejoin: 'round',
     'aria-hidden': true,
@@ -210,6 +221,15 @@ function NavIcon({ name }) {
         <svg {...common}>
           <path d="M3 10.5L12 3l9 7.5" />
           <path d="M5 10.5V21h14V10.5" />
+        </svg>
+      )
+    case 'loans':
+      return (
+        <svg {...common}>
+          <rect x="3.5" y="6" width="17" height="12" rx="2.5" />
+          <path d="M7 12h10" />
+          <path d="M7 9.2h2.5" />
+          <path d="M14.5 14.8H17" />
         </svg>
       )
     case 'blogs':
@@ -272,23 +292,34 @@ function NavIcon({ name }) {
     // Quick actions
     case 'trending':
       return (
-        <svg {...common} width={20} height={20}>
+        <svg {...common}>
           <path d="M4 19h16" />
           <path d="M6 15l4-4 3 3 5-7" />
           <path d="M18 7v4h-4" />
         </svg>
       )
+    case 'mfChart':
+      return (
+        <svg {...common}>
+          <path d="M4 19h16" />
+          <path d="M6 15l3.5-3 3 2.5L18 7" fill="none" />
+          <circle cx="6" cy="15" r="1.2" fill="currentColor" stroke="none" />
+          <circle cx="9.5" cy="12" r="1.2" fill="currentColor" stroke="none" />
+          <circle cx="12.5" cy="14.5" r="1.2" fill="currentColor" stroke="none" />
+          <circle cx="18" cy="7" r="1.2" fill="currentColor" stroke="none" />
+        </svg>
+      )
     case 'lock':
       return (
-        <svg {...common} width={20} height={20}>
-          <rect x="5" y="11" width="14" height="10" rx="2" />
+        <svg {...common}>
+          <rect x="5" y="11" width="14" height="10" rx="2.2" />
           <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-          <circle cx="12" cy="15" r="1.2" fill="currentColor" stroke="none" />
+          <circle cx="12" cy="16" r="1.35" fill="currentColor" stroke="none" />
         </svg>
       )
     case 'party':
       return (
-        <svg {...common} width={36} height={36} strokeWidth={1.75}>
+        <svg {...common} width={size} height={size} strokeWidth={1.75}>
           <path d="M8 20c2-4 6-8 14-10" />
           <path d="M6 10l4 2-1 4-4-1 1-5z" fill="currentColor" fillOpacity={0.35} />
           <circle cx="18" cy="8" r="1.2" fill="currentColor" />
@@ -313,7 +344,7 @@ function NavIcon({ name }) {
       )
     case 'refresh':
       return (
-        <svg {...common} width={18} height={18}>
+        <svg {...common}>
           <path d="M23 4v6h-6" />
           <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
         </svg>
@@ -347,10 +378,13 @@ function NavIcon({ name }) {
         </svg>
       )
     default:
+    case 'tax':
       return (
         <svg {...common}>
-          <path d="M12 6v12" />
-          <path d="M6 12h12" />
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+          <polyline points="14 2 14 8 20 8" />
+          <path d="M12 18V12" />
+          <path d="M9 15h6" />
         </svg>
       )
   }
@@ -383,42 +417,57 @@ function Stars({ value = 5 }) {
 
 const TABS = [
   { id: 'home', label: 'Home', icon: 'home' },
-  { id: 'blogs', label: 'Blogs', icon: 'blogs' },
+  { id: 'loans', label: 'Loans', icon: 'loans' },
+  { id: 'blogs', label: 'Insight', icon: 'blogs' },
   { id: 'calculator', label: 'Calculator', icon: 'calculator' },
   { id: 'cibil', label: 'CIBIL', icon: 'cibil' },
-  { id: 'profile', label: 'Profile', icon: 'profile' },
 ]
 
 const ROUTE_TO_TAB = {
   home: 'home',
   blogs: 'blogs',
+  loans: 'loans',
   calculator: 'calculator',
   cibil: 'cibil',
-  profile: 'profile',
+  profile: 'home',
   mutual_funds: 'home',
   insurance: 'home',
   bonds: 'home',
   savings: 'home',
+  taxation: 'home',
   credit_cards: 'home',
   emi_calculator: 'calculator',
+  fixed_deposit_calc: 'calculator',
+  fixed_deposit_soon: 'home',
+  ppf_calc: 'calculator',
+  rd_calc: 'calculator',
+  lumpsum_calc: 'calculator',
+  home_loan_emi_calc: 'calculator',
+  car_loan_emi_calc: 'calculator',
+  goal_planner_calc: 'calculator',
+  income_tax_calc: 'calculator',
+  gratuity_calc: 'calculator',
   sip_investment: 'home',
   insurance_explorer: 'home',
-  personal_loan_explorer: 'home',
+  personal_loan_explorer: 'loans',
+  business_loan_explorer: 'loans',
   credit_card_offers: 'home',
+  credit_card_eligibility: 'home',
   eligibility_form: 'home',
   blog_detail: 'blogs',
   application_form: 'home',
   notifications: 'home',
   account: 'home',
   full_credit_report: 'cibil',
-  edit_profile: 'profile',
-  linked_accounts: 'profile',
-  language: 'profile',
-  support: 'profile',
+  edit_profile: 'home',
+  linked_accounts: 'home',
+  language: 'home',
+  support: 'home',
   login: 'home',
   signup: 'home',
   forgot_password: 'home',
   otp_login: 'home',
+  verify_details: 'home',
   terms_conditions: 'home',
   privacy_policy: 'home',
 }
@@ -433,24 +482,66 @@ function hashToRoute() {
   return m?.[1] || 'home'
 }
 
-function ScreenShell({ title, subtitle, onBack, children }) {
+function ScreenShell({ title, subtitle, onBack, children, showBand = true, onNotifications, onProfile }) {
   return (
     <div className="feScreen feScreen--subpage" aria-label={title}>
-      <div className="feScreen__headerBand">
-        <div className="feScreenTop">
-          <button type="button" className="feBackBtn" onClick={onBack} aria-label="Back">
-            <NavIcon name="back" />
-          </button>
-          <div className="feScreenTop__texts">
-            <div className="feScreenTop__title">{title}</div>
-            {subtitle ? <div className="feScreenTop__sub">{subtitle}</div> : null}
+      {showBand ? (
+        <div className="feScreen__headerBand">
+          <div className="feScreenTop" style={{ justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <button type="button" className="feBackBtn" onClick={onBack} aria-label="Back">
+                <NavIcon name="back" />
+              </button>
+              <div className="feScreenTop__texts">
+                <div className="feScreenTop__title">{title}</div>
+                {subtitle ? <div className="feScreenTop__sub">{subtitle}</div> : null}
+              </div>
+            </div>
+            
+            <div className="feHeader__right" style={{ padding: 0 }}>
+              <button
+                type="button"
+                className="feHeader__iconBtn feHeader__iconBtn--bell"
+                style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}
+                aria-label="Notifications"
+                onClick={onNotifications}
+              >
+                <NavIcon name="bell" />
+              </button>
+              <button
+                type="button"
+                className="feHeader__avatar feHeader__avatar--glass"
+                style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}
+                aria-label="Profile"
+                onClick={onProfile}
+              >
+                <svg
+                  className="feHeader__avatarIcon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      ) : null}
       {children}
     </div>
   )
 }
+
+
 
 export default function FinExpertMobile() {
   const reduceMotion = useMemo(() => {
@@ -471,10 +562,17 @@ export default function FinExpertMobile() {
   const [profileUser, setProfileUser] = useState(loadProfile)
   const [appLanguage, setAppLanguage] = useState(loadLanguage)
   const [authUser, setAuthUser] = useState(loadAuthUser)
+  const [authFlowPhone, setAuthFlowPhone] = useState('')
   const [logoutOpen, setLogoutOpen] = useState(false)
+  const [headerHidden, setHeaderHidden] = useState(false)
+  const lastMainScrollTopRef = useRef(0)
+  const headerHiddenRef = useRef(false)
+  const headerToggleAnchorRef = useRef(0)
+  const mainRef = useRef(null)
+
+
 
   const languageLabel = LANGUAGE_LABELS[appLanguage] ?? 'English'
-
   useEffect(() => {
     if (typeof document === 'undefined') return
     document.documentElement.lang = appLanguage
@@ -492,12 +590,27 @@ export default function FinExpertMobile() {
     const url = routeToHash(to)
     if (replace) window.history.replaceState({ route: to }, '', url)
     else window.history.pushState({ route: to }, '', url)
+    // Scroll the main content area back to the top on every navigation
+    if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   const goBack = () => {
     if (typeof window === 'undefined') return
     setTransitionDir('back')
-    window.history.back()
+    
+    // For specific detail routes, go to their parent section
+    if (route === 'mutual_funds_detail') {
+      navigate('mutual_funds')
+    } else if (route === 'insurance_detail' || route === 'insurance_explorer') {
+      navigate('insurance')
+    } else if (route === 'personal_loan_explorer' || route === 'business_loan_explorer') {
+      navigate('loans')
+    } else if (route === 'blog_detail') {
+      navigate('blogs')
+    } else {
+      // Default: Go to home as requested
+      navigate('home')
+    }
   }
 
   useEffect(() => {
@@ -625,12 +738,6 @@ export default function FinExpertMobile() {
     setStoryOpen(false)
   }
 
-  const openStoryAt = (idx) => {
-    setStatusIdx(idx)
-    setStoryIdx(0)
-    setStoryOpen(true)
-  }
-
   const goNextStory = () => {
     const count = activeStatus?.stories?.length ?? 0
     if (count === 0) return
@@ -732,91 +839,177 @@ export default function FinExpertMobile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyOpen, storyIdx, statusIdx, reduceMotion, activeStory?.videoUrl, activeStory?.id, storySlideMs])
 
-  // 3) Banner carousel
-  const banners = useMemo(
+  // Explore Financial Products slider data + behavior
+  const exploreProducts = useMemo(
     () => [
       {
-        id: 'fd',
-        title: '🔥 Special FD Rates',
-        text: 'Earn up to 8.5% returns',
-        icon: 'pig',
-        coverSrc:
-          'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+        id: 'x_ins',
+        title: 'Insurance Plans',
+        benefit: 'Coverage options for every need',
+        route: 'insurance',
+        icon: 'shield',
+        isPrimary: true,
       },
       {
-        id: 'cc',
-        title: '💳 Lifetime Free Credit Card',
-        text: 'No joining or annual fees',
+        id: 'x_loan',
+        title: 'Personal Loan',
+        benefit: 'Compare loan offers & get eligibility',
+        route: 'personal_loan_explorer',
+        icon: 'home',
+      },
+      {
+        id: 'x_mf',
+        title: 'Mutual Funds (SIP)',
+        benefit: 'Curated portfolios for your goals',
+        route: 'sip_investment',
+        icon: 'mfChart',
+      },
+      {
+        id: 'x_fd',
+        title: 'Fixed Deposit (FD)',
+        benefit: 'Secure fixed returns with flexibility',
+        route: 'savings',
+        icon: 'lock',
+      },
+      {
+        id: 'x_cc',
+        title: 'Credit Cards',
+        benefit: 'Unlock rewards with eligibility checks',
+        route: 'credit_cards',
         icon: 'card',
-        coverSrc:
-          'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
       },
       {
-        id: 'mf',
-        title: '📈 Top Mutual Funds',
-        text: 'Expert curated portfolios',
-        icon: 'graph',
-        coverSrc:
-          'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+        id: 'x_emi',
+        title: 'EMI / Loan Calculator',
+        benefit: 'Estimate monthly payments instantly',
+        route: 'emi_calculator',
+        icon: 'calculator',
+      },
+      {
+        id: 'x_tax',
+        title: 'Tax Saving Plans',
+        benefit: 'Optimize with smart tax strategies',
+        route: 'ppf_calc',
+        icon: 'doc',
+      },
+      {
+        id: 'x_ret',
+        title: 'Retirement / Pension Plans',
+        benefit: 'Plan long-term with confidence',
+        route: 'gratuity_calc',
+        icon: 'pig',
       },
     ],
     [],
   )
-  const [bannerIdx, setBannerIdx] = useState(0)
+
+  const exploreRailRef = useRef(null)
+  const [exploreIdx, setExploreIdx] = useState(0)
+  const [explorePaused, setExplorePaused] = useState(false)
+  const [exploreSwiping, setExploreSwiping] = useState(false)
+  const exploreResumeTimerRef = useRef(null)
+  const exploreSwipingTimerRef = useRef(null)
+  const exploreProgrammaticScrollRef = useRef(false)
+  const exploreStepRef = useRef(0)
+
+  const scheduleExploreResume = useCallback(() => {
+    if (typeof window === 'undefined') return
+    if (exploreResumeTimerRef.current) clearTimeout(exploreResumeTimerRef.current)
+    exploreResumeTimerRef.current = window.setTimeout(() => {
+      setExplorePaused(false)
+    }, 2200)
+  }, [])
+
+  const pauseExplore = useCallback(() => {
+    setExplorePaused(true)
+    if (exploreResumeTimerRef.current) clearTimeout(exploreResumeTimerRef.current)
+  }, [])
+
+  const computeExploreStep = useCallback(() => {
+    const rail = exploreRailRef.current
+    if (!rail) return
+    const cards = Array.from(rail.children).filter((el) => el instanceof HTMLElement)
+    if (cards.length >= 2) {
+      const step = (cards[1].offsetLeft ?? 0) - (cards[0].offsetLeft ?? 0)
+      exploreStepRef.current = step > 0 ? step : (cards[0].offsetWidth ?? 220) + 12
+      return
+    }
+    if (cards.length === 1) {
+      exploreStepRef.current = cards[0].offsetWidth ?? 220
+    }
+  }, [])
+
+  const scrollExploreToIndex = useCallback(
+    (idx) => {
+      const rail = exploreRailRef.current
+      if (!rail) return
+      const card = rail.children?.[idx]
+      if (!(card instanceof HTMLElement)) return
+      const targetLeft = card.offsetLeft ?? 0
+
+      exploreProgrammaticScrollRef.current = true
+      rail.scrollTo({
+        left: targetLeft,
+        behavior: reduceMotion ? 'auto' : 'smooth',
+      })
+      setExploreIdx(idx)
+
+      window.setTimeout(() => {
+        exploreProgrammaticScrollRef.current = false
+      }, reduceMotion ? 0 : 1300)
+    },
+    [reduceMotion],
+  )
+
+  useEffect(() => {
+    if (route !== 'home') return
+    computeExploreStep()
+    // Keep explore index in a valid range on resize/re-render.
+    setExploreIdx((i) => Math.max(0, Math.min(exploreProducts.length - 1, i)))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [route, exploreProducts.length, computeExploreStep])
 
   useEffect(() => {
     if (reduceMotion) return
-    const t = setInterval(() => setBannerIdx((i) => (i + 1) % banners.length), 4200)
+    if (route !== 'home') return
+    if (explorePaused) return
+    if (exploreProducts.length <= 1) return
+    const t = window.setInterval(() => {
+      const next = (exploreIdx + 1) % exploreProducts.length
+      scrollExploreToIndex(next)
+    }, 3600)
     return () => clearInterval(t)
-  }, [banners.length, reduceMotion])
+  }, [reduceMotion, route, explorePaused, exploreIdx, exploreProducts.length, scrollExploreToIndex])
 
-  // 4) CIBIL score card
-  const [homeCibilScore, setHomeCibilScore] = useState(785)
-  const [homeCibilRefreshing, setHomeCibilRefreshing] = useState(false)
-  const [homeCibilToast, setHomeCibilToast] = useState('')
-  const [homeCibilAnimate, setHomeCibilAnimate] = useState(true)
+  const onExploreScroll = useCallback(() => {
+    const rail = exploreRailRef.current
+    if (!rail) return
+    if (exploreProgrammaticScrollRef.current) return
 
-  useEffect(() => {
-    if (!homeCibilToast) return
-    const t = setTimeout(() => setHomeCibilToast(''), 2200)
-    return () => clearTimeout(t)
-  }, [homeCibilToast])
+    const cards = Array.from(rail.children).filter((el) => el instanceof HTMLElement)
+    if (cards.length === 0) return
 
-  const cibil = useMemo(() => {
-    const min = 300
-    const max = 900
-    const pct = Math.max(0, Math.min(1, (homeCibilScore - min) / (max - min)))
-    const color =
-      homeCibilScore < 600 ? 'var(--error)' : homeCibilScore < 750 ? 'var(--orange)' : 'var(--success)'
-    const label = homeCibilScore < 600 ? 'Needs attention' : homeCibilScore < 750 ? 'Fair' : 'Excellent'
-    const band = homeCibilScore < 600 ? 'low' : homeCibilScore < 750 ? 'mid' : 'high'
-    const gradId =
-      band === 'low'
-        ? 'feHomeCibilGradLow'
-        : band === 'mid'
-          ? 'feHomeCibilGradMid'
-          : 'feHomeCibilGradGood'
-    return { pct, color, label, band, gradId }
-  }, [homeCibilScore])
+    const sl = rail.scrollLeft
+    let bestIdx = 0
+    let bestDist = Number.POSITIVE_INFINITY
+    for (let i = 0; i < cards.length; i += 1) {
+      const dist = Math.abs((cards[i].offsetLeft ?? 0) - sl)
+      if (dist < bestDist) {
+        bestDist = dist
+        bestIdx = i
+      }
+    }
 
-  const refreshHomeCibil = async () => {
-    if (homeCibilRefreshing) return
-    setHomeCibilRefreshing(true)
-    setHomeCibilToast('')
+    const clamped = Math.max(0, Math.min(exploreProducts.length - 1, bestIdx))
+    setExploreIdx((prev) => (prev === clamped ? prev : clamped))
 
-    await new Promise((r) => setTimeout(r, 2400))
-    const bump = Math.max(1, Math.round(3 + Math.random() * 6))
-    setHomeCibilScore((s) => Math.min(900, s + bump))
+    setExploreSwiping(true)
+    if (exploreSwipingTimerRef.current) clearTimeout(exploreSwipingTimerRef.current)
+    exploreSwipingTimerRef.current = window.setTimeout(() => setExploreSwiping(false), 160)
+    scheduleExploreResume()
+  }, [exploreProducts.length, scheduleExploreResume])
 
-    setHomeCibilAnimate(false)
-    if (!reduceMotion) setTimeout(() => setHomeCibilAnimate(true), 30)
-    else setHomeCibilAnimate(true)
-
-    setHomeCibilToast('Score Updated Successfully')
-    setHomeCibilRefreshing(false)
-  }
-
-  // 8) Reviews auto-scroll
+  // 3) Reviews auto-scroll
   const reviews = useMemo(
     () => [
       {
@@ -884,14 +1077,27 @@ export default function FinExpertMobile() {
   }, [reduceMotion, reviews.length])
 
   // Blogs page state + data
-  const baseBlogCategories = useMemo(
-    () => ['All', 'Loans', 'Insurance', 'Investment', 'Credit Cards', 'Economy'],
+  const baseBlogCategories = useMemo(() => ['All', 'India'], [])
+
+  const fallbackNewsCovers = useMemo(
+    () => [
+      // Use source.unsplash.com so images always resolve.
+      // We rely on scrim in CSS for readability.
+      'https://source.unsplash.com/900x600/?news,breaking&sig=1',
+      'https://source.unsplash.com/900x600/?journalism,newspaper&sig=2',
+      'https://source.unsplash.com/900x600/?india,news&sig=3',
+      'https://source.unsplash.com/900x600/?business,news&sig=4',
+      'https://source.unsplash.com/900x600/?finance,market&sig=5',
+      'https://source.unsplash.com/900x600/?headlines,reporting&sig=6',
+    ],
     [],
   )
   const [blogCat, setBlogCat] = useState('All')
   const [blogQuery, setBlogQuery] = useState('')
+  const [homeNewsTab, setHomeNewsTab] = useState('All News')
   const blogTabsRef = useRef(null)
   const trendingScrollRef = useRef(null)
+  const marketTickerRef = useRef(null)
   const trendingAutoScrollRef = useRef(false)
   const trendingUserPauseRef = useRef(false)
   const trendingUserPauseTimerRef = useRef(null)
@@ -909,67 +1115,441 @@ export default function FinExpertMobile() {
     }, 0)
   }
 
-  const blogPosts = useMemo(
+  const staticNewsPosts = useMemo(
     () => [
       {
-        id: 'cibil',
-        title: 'How to Improve Your CIBIL Score',
-        desc: 'Practical steps to build strong credit health and unlock better offers.',
-        cat: 'Loans',
-        time: 'Today',
-        author: 'FinExpert Team',
-        date: 'Mar 26, 2026',
-        coverSrc:
-          'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80',
+        id: 'fallback-1',
+        title: 'World Markets & Economy — Live updates',
+        desc: 'Fetching live news feeds in the background. If your network blocks RSS, this fallback shows while you connect.',
+        cat: 'India',
+        time: 'Now',
+        author: 'FinExpert',
+        date: 'Today',
+        coverSrc: fallbackNewsCovers[0],
       },
       {
-        id: 'p1',
-        title: 'SIP strategies to stay consistent in 2026',
-        desc: 'Build a simple plan, automate your investments, and avoid common mistakes.',
-        cat: 'Investment',
-        time: '2 hrs ago',
-        coverSrc:
-          'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80',
+        id: 'fallback-2',
+        title: 'Finance Insights — Smart investing tips',
+        desc: 'Stay informed with curated headlines across investing, credit and savings themes.',
+        cat: 'India',
+        time: 'Now',
+        author: 'FinExpert',
+        date: 'Today',
+        coverSrc: fallbackNewsCovers[1],
       },
       {
-        id: 'p2',
-        title: 'Loan EMI: reduce interest without refinancing',
-        desc: 'Prepayments, tenure optimization, and practical rules to cut total cost.',
-        cat: 'Loans',
-        time: '5 hrs ago',
-        coverSrc:
-          'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80',
+        id: 'fallback-3',
+        title: 'Global Headlines — What matters today',
+        desc: 'News feed loading…',
+        cat: 'India',
+        time: 'Now',
+        author: 'FinExpert',
+        date: 'Today',
+        coverSrc: fallbackNewsCovers[2],
       },
       {
-        id: 'p3',
-        title: 'Health insurance: what to check before you buy',
-        desc: 'Coverage gaps, room rent limits, and claim settlement basics explained.',
-        cat: 'Insurance',
-        time: '8 hrs ago',
-        coverSrc:
-          'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80',
+        id: 'fallback-4',
+        title: 'FinExpert News — curated for your interests',
+        desc: 'If live fetch succeeds, these cards will update automatically.',
+        cat: 'India',
+        time: 'Now',
+        author: 'FinExpert',
+        date: 'Today',
+        coverSrc: fallbackNewsCovers[3],
       },
       {
-        id: 'p4',
-        title: 'Credit cards: rewards vs cashback—what wins?',
-        desc: 'A quick framework to pick the best card for your lifestyle and spending.',
-        cat: 'Credit Cards',
-        time: '1 day ago',
-        coverSrc:
-          'https://images.unsplash.com/photo-1554224154-26032ffc0d07?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80',
+        id: 'fallback-5',
+        title: 'Economic updates — market pulse',
+        desc: 'Tune into global finance developments with quick summaries.',
+        cat: 'India',
+        time: 'Now',
+        author: 'FinExpert',
+        date: 'Today',
+        coverSrc: fallbackNewsCovers[4],
       },
       {
-        id: 'p5',
-        title: 'Economy snapshot: inflation, rates, and you',
-        desc: 'How policy changes affect loans, savings, and monthly budgets.',
-        cat: 'Economy',
-        time: '2 days ago',
-        coverSrc:
-          'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80',
+        id: 'fallback-6',
+        title: 'Investing & savings — latest stories',
+        desc: 'Loading live RSS feeds…',
+        cat: 'India',
+        time: 'Now',
+        author: 'FinExpert',
+        date: 'Today',
+        coverSrc: fallbackNewsCovers[5],
       },
     ],
     [],
   )
+
+  const [blogPosts, setBlogPosts] = useState(staticNewsPosts)
+
+  const [newsLoading, setNewsLoading] = useState(false)
+
+  const marketNewsPool = useMemo(
+    () => [
+      {
+        id: 'mkt-tata',
+        tag: 'Stocks',
+        tab: 'Markets',
+        time: '45 mins ago',
+        title: 'Tata Motors share price surges 5% after record-breaking quarterly profits.',
+        source: 'Reuters',
+        cover:
+          'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=420&q=80',
+      },
+      {
+        id: 'mkt-bitcoin',
+        tag: 'Crypto',
+        tab: 'Markets',
+        time: '1 hour ago',
+        title: 'Bitcoin stabilizes at $65k as institutional inflow remains steady in India.',
+        source: 'Bloomberg',
+        cover:
+          'https://images.unsplash.com/photo-1518544866330-4e6f7a0c4e41?auto=format&fit=crop&w=420&q=80',
+      },
+      {
+        id: 'mkt-nifty',
+        tag: 'Stocks',
+        tab: 'Markets',
+        time: '9 mins ago',
+        title: 'Nifty midcap index extends gains as banking and auto stocks lead.',
+        source: 'CNBC TV18',
+        cover:
+          'https://images.unsplash.com/photo-1642052501978-0e6f8f7cf1e6?auto=format&fit=crop&w=420&q=80',
+      },
+      {
+        id: 'mkt-rupee',
+        tag: 'Forex',
+        tab: 'Markets',
+        time: '18 mins ago',
+        title: 'Rupee trades in a tight range ahead of US inflation print this evening.',
+        source: 'Mint',
+        cover:
+          'https://images.unsplash.com/photo-1580041065738-e72023775cdc?auto=format&fit=crop&w=420&q=80',
+      },
+    ],
+    [],
+  )
+
+  const economyNewsPool = useMemo(
+    () => [
+      {
+        id: 'eco-repo',
+        tag: 'Economy',
+        tab: 'Economy',
+        time: '12 mins ago',
+        title: 'RBI Keeps Repo Rate Unchanged: Impact on Your Home Loan EMIs and Savings',
+        source: 'The Monetary Policy Committee has decided to maintain the status quo for the seventh time in a row.',
+        cover:
+          'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 'eco-gst',
+        tag: 'Policy',
+        tab: 'Economy',
+        time: '26 mins ago',
+        title: 'GST council meet likely to review compliance norms for digital businesses.',
+        source: 'Business Standard',
+        cover:
+          'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 'eco-inflation',
+        tag: 'Inflation',
+        tab: 'Economy',
+        time: '33 mins ago',
+        title: 'Food inflation cools in metros while fuel-linked costs stay elevated.',
+        source: 'ET Now',
+        cover:
+          'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 'eco-manufacturing',
+        tag: 'Growth',
+        tab: 'Economy',
+        time: '51 mins ago',
+        title: 'Manufacturing PMI remains in expansion zone for the tenth month.',
+        source: 'The Hindu BusinessLine',
+        cover:
+          'https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&w=1200&q=80',
+      },
+    ],
+    [],
+  )
+
+  const homeNewsInsights = useMemo(
+    () => [
+      {
+        id: 'ins-1',
+        title: 'Why mid-cap stocks are outperforming large-caps this season.',
+        date: 'May 24, 2024',
+        cat: 'Analysis',
+        icon: 'trending',
+      },
+      {
+        id: 'ins-2',
+        title: 'GST council meeting scheduled: Tax revisions for digital services expected.',
+        date: 'May 24, 2024',
+        cat: 'Policy',
+        icon: 'shield',
+      },
+      {
+        id: 'ins-3',
+        title: 'Mumbai real estate market hits 5-year high in luxury segment sales.',
+        date: 'May 23, 2024',
+        cat: 'Real Estate',
+        icon: 'home',
+      },
+    ],
+    [],
+  )
+
+  const [marketNewsLive, setMarketNewsLive] = useState(marketNewsPool)
+  const [economyNewsLive, setEconomyNewsLive] = useState(economyNewsPool)
+
+  useEffect(() => {
+    setMarketNewsLive(marketNewsPool)
+    setEconomyNewsLive(economyNewsPool)
+  }, [marketNewsPool, economyNewsPool])
+
+  useEffect(() => {
+    const rotate = (arr) => (arr.length > 1 ? [...arr.slice(1), arr[0]] : arr)
+    const id = window.setInterval(() => {
+      setMarketNewsLive((prev) => rotate(prev))
+      setEconomyNewsLive((prev) => rotate(prev))
+    }, 5500)
+    return () => clearInterval(id)
+  }, [])
+
+  const homeNewsFiltered = useMemo(() => {
+    if (homeNewsTab === 'Markets') return marketNewsLive
+    if (homeNewsTab === 'Economy') return economyNewsLive
+    return [...economyNewsLive.slice(0, 2), ...marketNewsLive.slice(0, 2)]
+  }, [homeNewsTab, marketNewsLive, economyNewsLive])
+
+  const homeNewsLead = homeNewsFiltered[0] ?? economyNewsLive[0] ?? marketNewsLive[0]
+  const homeNewsList = homeNewsFiltered.slice(1, 3)
+  const asBlogPost = (item) => ({
+    id: item.id,
+    title: item.title,
+    desc: item.source,
+    cat: item.tag,
+    time: item.time,
+    author: 'SilkLend Desk',
+    date: 'Today',
+    coverSrc: item.cover,
+    sections: [{ title: 'Summary', text: item.source }],
+  })
+  const marketTickersBase = useMemo(
+    () => [
+      { id: 'nifty50', label: 'Nifty 50', sub: 'NSE Index', value: 21853.8, change: -0.24 },
+      { id: 'sensex', label: 'Sensex', sub: 'BSE Index', value: 72112.35, change: 0.36 },
+      { id: 'banknifty', label: 'Bank Nifty', sub: 'Banking Index', value: 46822.15, change: 0.54 },
+      { id: 'gold', label: 'Gold', sub: 'MCX', value: 62450, change: 1.12, prefix: '₹', compact: true },
+      { id: 'silver', label: 'Silver', sub: 'MCX', value: 73600, change: -0.44, prefix: '₹', compact: true },
+      { id: 'crude', label: 'Crude Oil', sub: 'Commodity', value: 6785, change: -0.31, prefix: '₹', compact: true },
+      { id: 'usd-inr', label: 'USD/INR', sub: 'Forex', value: 83.12, change: 0.09 },
+      { id: 'btc', label: 'Bitcoin', sub: 'Crypto', value: 65210.2, change: 1.48, prefix: '$' },
+    ],
+    [],
+  )
+  const [marketTickers, setMarketTickers] = useState(marketTickersBase)
+  const [marketSlide, setMarketSlide] = useState(0)
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setMarketTickers((prev) =>
+        prev.map((t) => {
+          const drift = (Math.random() - 0.5) * (t.compact ? 60 : 24)
+          const pctDrift = (Math.random() - 0.5) * 0.1
+          return {
+            ...t,
+            value: Math.max(1, t.value + drift),
+            change: Number(Math.max(-9.99, Math.min(9.99, t.change + pctDrift)).toFixed(2)),
+          }
+        }),
+      )
+    }, 3500)
+    return () => clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    if (route !== 'blogs') return
+    if (reduceMotion) return
+    const id = window.setInterval(() => {
+      setMarketSlide((i) => (i + 1) % marketTickers.length)
+    }, 2300)
+    return () => clearInterval(id)
+  }, [route, reduceMotion, marketTickers.length])
+
+  useEffect(() => {
+    const rail = marketTickerRef.current
+    if (!rail) return
+    const firstCard = rail.querySelector('.feNewsTicker__card')
+    if (!firstCard) return
+    const gap = 8
+    const step = firstCard.clientWidth + gap
+    rail.scrollTo({ left: step * marketSlide, behavior: reduceMotion ? 'auto' : 'smooth' })
+  }, [marketSlide, reduceMotion])
+
+  useEffect(() => {
+    // Fetch news for both: full News page + the News preview section on Home.
+    const shouldFetch = route === 'blogs' || route === 'home'
+    if (!shouldFetch) return
+
+    let cancelled = false
+
+    const stripHtml = (s) =>
+      (s ?? '')
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/\s+/g, ' ')
+        .trim()
+
+    const formatRelative = (isoLike) => {
+      if (!isoLike) return 'Now'
+      const d = new Date(isoLike)
+      if (Number.isNaN(d.getTime())) return 'Now'
+      const diff = Date.now() - d.getTime()
+      const m = Math.floor(diff / 60000)
+      if (m < 60) return `${Math.max(1, m)} min ago`
+      const h = Math.floor(m / 60)
+      if (h < 24) return `${h} hrs ago`
+      const day = Math.floor(h / 24)
+      return `${day} days ago`
+    }
+
+    const loadRss = async (sourceName, rssUrl, maxItems = 8) => {
+      const proxyUrl = `https://r.jina.ai/https://${rssUrl.replace(/^https?:\/\//, '')}`
+      const res = await fetch(proxyUrl)
+      if (!res.ok) throw new Error(`RSS fetch failed: ${res.status}`)
+      const text = await res.text()
+      const doc = new DOMParser().parseFromString(text, 'text/xml')
+      // RSS: <item> | Atom: <entry>
+      const items = Array.from(doc.querySelectorAll('item, entry')).slice(0, maxItems)
+
+      const toPost = (it, idx) => {
+        const title = it.querySelector('title')?.textContent?.trim() ?? ''
+        const linkEl = it.querySelector('link')
+        const link =
+          linkEl?.getAttribute('href') ?? linkEl?.textContent?.trim() ?? ''
+        const descRaw =
+          it.querySelector('description')?.textContent ??
+          it.querySelector('summary')?.textContent ??
+          ''
+        const desc = stripHtml(descRaw)
+        const pubDate =
+          it.querySelector('pubDate')?.textContent?.trim() ??
+          it.querySelector('published')?.textContent?.trim() ??
+          it.querySelector('updated')?.textContent?.trim() ??
+          ''
+
+        const normalizeImageUrl = (u) => {
+          if (!u) return ''
+          const s = String(u)
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'")
+            .trim()
+          if (!s) return ''
+          if (s.startsWith('//')) return `https:${s}`
+          return s
+        }
+
+        const isLikelyValidImageUrl = (u) => {
+          const s = normalizeImageUrl(u)
+          if (!s) return false
+          // Avoid non-http(s) junk. Unsplash "images.unsplash.com/photo-XXX" is ok too.
+          return /^https?:\/\//i.test(s) && s.length > 12
+        }
+
+        // Try to extract a relevant news image from the RSS/Atom item.
+        // Many feeds include it as media:* or enclosure. If not present, attempt
+        // to grab the first <img src="..."> from the HTML-ish description.
+        const defaultCoverSrc = fallbackNewsCovers[idx % fallbackNewsCovers.length] ?? null
+        const coverFromMedia =
+          it.querySelector('media\\:content')?.getAttribute('url') ||
+          it.querySelector('media\\:thumbnail')?.getAttribute('url') ||
+          it.querySelector('enclosure')?.getAttribute('url') ||
+          it.querySelector('enclosure')?.getAttribute('href') ||
+          ''
+        const coverFromDescMatch =
+          descRaw?.match(/(?:<img|&lt;img)[^>]*src\s*=\s*["']([^"']+)["']/i)?.[1] ||
+          descRaw?.match(/src\s*=\s*["']([^"']+)["']/i)?.[1] ||
+          ''
+
+        const coverCandidate = normalizeImageUrl(coverFromMedia) || normalizeImageUrl(coverFromDescMatch)
+        const coverSrc = isLikelyValidImageUrl(coverCandidate) ? coverCandidate : defaultCoverSrc
+
+        const summary = desc ? desc.slice(0, 160) : title
+        return {
+          id: `news-${sourceName}-${idx}-${pubDate || link}`,
+          title: title || 'Untitled news',
+          desc: summary,
+          cat: 'India',
+          time: formatRelative(pubDate),
+          author: sourceName,
+          date: pubDate ? new Date(pubDate).toLocaleDateString(undefined, { month: 'short', day: '2-digit' }) : 'Today',
+          coverSrc,
+          sections: [
+            {
+              title: 'Summary',
+              text: summary,
+            },
+          ],
+        }
+      }
+
+      return items.map(toPost)
+    }
+
+    let inFlight = false
+    const run = async () => {
+      if (inFlight) return
+      inFlight = true
+      try {
+        setNewsLoading(true)
+        const sources = [
+          { name: 'BBC India', url: 'https://feeds.bbci.co.uk/news/world/asia/india/rss.xml' },
+          { name: 'The Hindu (National)', url: 'https://www.thehindu.com/news/national/feeder/default.rss' },
+          { name: 'NDTV India', url: 'http://feeds.feedburner.com/ndtvkhabar-india' },
+          { name: 'Hindustan Times', url: 'https://www.hindustantimes.com/rss/topnews/rssfeed.xml' },
+          // If this feed is temporarily blocked, others will still show fallback/partial results.
+          { name: 'India Today', url: 'https://www.indiatoday.in/rss/home' },
+        ]
+
+        const results = []
+        for (const s of sources) {
+          try {
+            const posts = await loadRss(s.name, s.url, 3)
+            results.push(...posts)
+          } catch {
+            // ignore per-source errors
+          }
+        }
+
+        if (cancelled) return
+
+        const next = results.slice(0, 10)
+        setBlogPosts(next.length ? next : staticNewsPosts)
+      } finally {
+        if (!cancelled) setNewsLoading(false)
+        inFlight = false
+      }
+    }
+
+    run()
+    const refreshMs = 30 * 60 * 1000 // refresh ~ every 30 minutes
+    const refreshId = window.setInterval(() => run(), refreshMs)
+
+    return () => {
+      cancelled = true
+      window.clearInterval(refreshId)
+    }
+  }, [route, staticNewsPosts])
 
   const filteredPosts = useMemo(() => {
     const q = blogQuery.trim().toLowerCase()
@@ -1067,7 +1647,7 @@ export default function FinExpertMobile() {
   }
 
   const shareBlog = async (post) => {
-    const title = post?.title ?? 'FinExpert Blog'
+    const title = post?.title ?? 'FinExpert News'
     const text = `${title} — via FinExpert`
     const url = typeof window === 'undefined' ? '' : window.location.href
     try {
@@ -1084,40 +1664,188 @@ export default function FinExpertMobile() {
     navigate('login', { replace: true })
   }
 
-  return (
-    <div className={`feMobile${route === 'home' ? ' feMobile--home' : ''}`}>
-      {route !== 'login' && route !== 'signup' && route !== 'forgot_password' && route !== 'otp_login' && route !== 'terms_conditions' && route !== 'privacy_policy' ? (
-      <header className="feHeader" aria-label="FinExpert header">
-        <div className="feHeader__left">
-          <div className="feHeader__appName">FinExpert</div>
-          <div className="feHeader__greeting">{appLanguage === 'hi' ? 'Hi, User 👋' : 'Hi, User 👋'}</div>
-          <div className="feHeader__subtitle">
-            Your All-in-One Financial App
-          </div>
-        </div>
+  const onMainScroll = useCallback((e) => {
+    const scrollTop = e.currentTarget.scrollTop
+    const prevTop = lastMainScrollTopRef.current
+    const delta = scrollTop - prevTop
+    lastMainScrollTopRef.current = scrollTop
 
-        <div className="feHeader__right">
-          <button
-            className="feHeader__iconBtn"
-            type="button"
-            aria-label="Notifications"
-            onClick={() => navigate('notifications')}
-          >
-            <NavIcon name="bell" />
-          </button>
-          <button
-            className="feHeader__avatar"
-            type="button"
-            aria-label="Profile"
-            onClick={() => navigate('account')}
-          >
-            <span className="feHeader__avatarInner" aria-hidden="true" />
-          </button>
-        </div>
-      </header>
+    if (scrollTop <= 8) {
+      if (headerHiddenRef.current) {
+        headerHiddenRef.current = false
+        setHeaderHidden(false)
+      }
+      headerToggleAnchorRef.current = scrollTop
+      return
+    }
+
+    if (Math.abs(delta) < 5) return
+
+    const movedSinceToggle = Math.abs(scrollTop - headerToggleAnchorRef.current)
+
+    // Hide only after meaningful downward movement (prevents flicker near edges).
+    if (!headerHiddenRef.current && delta > 0 && scrollTop > 84 && movedSinceToggle > 28) {
+      headerHiddenRef.current = true
+      headerToggleAnchorRef.current = scrollTop
+      setHeaderHidden(true)
+      return
+    }
+
+    // Show only after meaningful upward movement.
+    if (headerHiddenRef.current && delta < 0 && movedSinceToggle > 18) {
+      headerHiddenRef.current = false
+      headerToggleAnchorRef.current = scrollTop
+      setHeaderHidden(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    setHeaderHidden(false)
+    headerHiddenRef.current = false
+    lastMainScrollTopRef.current = 0
+    headerToggleAnchorRef.current = 0
+  }, [route])
+
+  const isAuthFlowRoute =
+    route === 'login' ||
+    route === 'signup' ||
+    route === 'forgot_password' ||
+    route === 'otp_login' ||
+    route === 'verify_details' ||
+    route === 'terms_conditions' ||
+    route === 'privacy_policy'
+  const isAuthStaticRoute = route === 'login'
+
+  const ROUTES_WITH_SCREEN_BAND = [
+    'edit_profile', 'linked_accounts', 'language', 'support', 'mutual_funds_detail', 'bonds', 'savings', 'notifications', 'account', 'credit_card_offers', 'blog_detail', 'income_tax_calc', 'gratuity_calc', 'fixed_deposit_calc', 'fixed_deposit_soon', 'ppf_calc', 'rd_calc', 'lumpsum_calc', 'goal_planner_calc', 'car_loan_emi_calc', 'emi_calculator', 'sip_investment', 'credit_card_eligibility', 'news'
+  ];
+
+  const showHeader =
+    route !== 'login' &&
+    route !== 'signup' &&
+    route !== 'forgot_password' &&
+    route !== 'otp_login' &&
+    route !== 'verify_details' &&
+    route !== 'terms_conditions' &&
+    route !== 'privacy_policy' &&
+    !ROUTES_WITH_SCREEN_BAND.includes(route)
+
+  return (
+    <div className={`feMobile${route === 'home' ? ' feMobile--home' : ''}${ROUTES_WITH_SCREEN_BAND.includes(route) ? ' feMobile--subpage' : ''}`}>
+      {showHeader ? (
+        <header className={`feHeader${headerHidden ? ' feHeader--hidden' : ''}`} aria-label="FinExpert header">
+          <div className="feHeader__left">
+            {route === 'home' ? (
+              <div className="feHeader__brandHome" aria-label="FinExprt">
+                <div className="feHeader__brandText">
+                  <span className="feHeader__brandFin">Fin</span>
+                  <span className="feHeader__brandExprt">Exprt</span>
+                </div>
+                <div className="feHeader__brandTagline">ALL IN ONE FINANCIAL APP</div>
+              </div>
+            ) : route === 'insurance' ||
+              route === 'insurance_detail' ||
+              route === 'insurance_explorer' ||
+              route === 'blogs' ||
+              route === 'loans' ||
+              route === 'credit_cards' ||
+              route === 'home_loan_emi_calc' ||
+              route === 'personal_loan_explorer' ||
+              route === 'business_loan_explorer' ||
+              route === 'eligibility_form' ||
+              route === 'application_form' ||
+              route === 'cibil' ||
+              route === 'taxation' ||
+              route === 'full_credit_report' ? (
+              <div className="feHeader__backTitle">
+                <button
+                  type="button"
+                  className="feHeader__iconBtn feHeader__iconBtn--back"
+                  aria-label="Back"
+                  onClick={goBack}
+                >
+                  <NavIcon name="back" />
+                </button>
+                {route === 'taxation' ? (
+                  <div className="feHeader__brandText" style={{ marginLeft: '8px', fontSize: '18px' }}>
+                    <span className="feHeader__brandFin">Fin</span>
+                    <span className="feHeader__brandExprt">Exprt</span>
+                  </div>
+                ) : (
+                  <div className="feHeader__sectionTitle">
+                    {route === 'cibil' || route === 'full_credit_report'
+                      ? 'CIBIL'
+                      : route === 'loans'
+                        ? 'Loans'
+                        : route === 'credit_cards'
+                          ? 'Credit Cards'
+                          : route === 'home_loan_emi_calc'
+                            ? 'Home Loan'
+                        : route === 'personal_loan_explorer'
+                          ? 'Personal Loan'
+                          : route === 'business_loan_explorer'
+                            ? 'Business Loan'
+                            : route === 'eligibility_form'
+                              ? 'Eligibility'
+                              : route === 'application_form'
+                                ? 'Apply'
+                                : route === 'blogs'
+                                  ? 'Insight'
+                                  : 'Insurance'}
+                  </div>
+                )}
+              </div>
+            ) : route === 'mutual_funds' ? (
+              <button
+                type="button"
+                className="feHeader__iconBtn feHeader__iconBtn--back"
+                aria-label="Back"
+                onClick={goBack}
+              >
+                <NavIcon name="back" />
+              </button>
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <div className="feHeader__right">
+            <button
+              type="button"
+              className="feHeader__iconBtn feHeader__iconBtn--bell"
+              aria-label="Notifications"
+              onClick={() => navigate('notifications')}
+            >
+              <NavIcon name="bell" />
+            </button>
+            <button
+              type="button"
+              className="feHeader__avatar feHeader__avatar--glass"
+              aria-label="Profile"
+              onClick={() => navigate('profile')}
+            >
+              <svg
+                className="feHeader__avatarIcon"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" />
+              </svg>
+            </button>
+          </div>
+        </header>
       ) : null}
 
-      <main className="feMain" aria-label="Main content">
+      <main ref={mainRef} className={`feMain${isAuthStaticRoute ? ' feMain--auth' : ''}`} aria-label="Main content" onScroll={onMainScroll}>
         <div
           key={transitionKey}
           className={`feRoute feRoute--${transitionDir}`}
@@ -1125,22 +1853,10 @@ export default function FinExpertMobile() {
         >
           {route === 'login' ? (
             <LoginPage
-              onLogin={async (payload) => {
-                const email = (payload?.email ?? '').trim().toLowerCase()
-                const password = payload?.password ?? ''
-                const ok =
-                  email === (authUser.email ?? '').trim().toLowerCase() &&
-                  password === (authUser.password ?? '')
-                if (ok) {
-                  navigate('home', { replace: true })
-                  return { ok: true }
-                }
-                return { ok: false, message: 'Invalid email or password' }
+              onGetStarted={(payload) => {
+                setAuthFlowPhone(payload.mobile)
+                navigate('otp_login')
               }}
-              onCreateAccount={() => navigate('signup')}
-              onBack={() => navigate('home', { replace: true })}
-              onForgotPassword={() => navigate('forgot_password')}
-              onLoginWithOtp={() => navigate('otp_login')}
             />
           ) : route === 'signup' ? (
             <SignupPage
@@ -1205,1150 +1921,839 @@ export default function FinExpertMobile() {
           ) : route === 'otp_login' ? (
             <OtpLoginPage
               onBack={() => navigate('login')}
-              onSuccess={() => navigate('home', { replace: true })}
+              initialPhone={authFlowPhone}
+              onSuccess={(payload) => {
+                setAuthFlowPhone(payload.phone)
+                navigate('verify_details')
+              }}
+            />
+          ) : route === 'verify_details' ? (
+            <VerifyDetailsPage
+              phone={authFlowPhone}
+              onBack={() => navigate('otp_login')}
+              onSubmit={(payload) => {
+                setProfileUser((prev) => ({
+                  ...prev,
+                  name: `${payload.firstName} ${payload.lastName}`.trim(),
+                  email: payload.email,
+                  phone: payload.phone,
+                }))
+                navigate('home', { replace: true })
+              }}
             />
           ) : route === 'blogs' ? (
-          <>
-            <section className="feBlogsTop" aria-label="Blogs header">
-              <div className="feBlogsTop__title">Blogs</div>
-              <div className="feBlogsTop__sub">Latest financial news & insights</div>
-            </section>
-
-            <section className="feBlogsTabs" aria-label="Blog categories">
-              <div ref={blogTabsRef} className="feTabsRow" role="tablist" aria-label="Category tabs">
-                {blogCategories.map((c) => {
-                  const isActive = c === blogCat
-                  return (
-                    <button
-                      key={c}
-                      type="button"
-                      className={`feCatTab ${isActive ? 'is-active' : ''}`}
-                      data-cat={c}
-                      onClick={() => setBlogCatAndFocus(c)}
-                      role="tab"
-                      aria-selected={isActive}
-                    >
-                      {c}
-                    </button>
-                  )
-                })}
-              </div>
-            </section>
-
-            <section className="feBlogsSearch" aria-label="Search">
-              <label className="feSearch">
-                <span className="feSearch__icon" aria-hidden="true">
-                  <NavIcon name="search" />
-                </span>
-                <input
-                  className="feSearch__input"
-                  value={blogQuery}
-                  onChange={(e) => setBlogQuery(e.target.value)}
-                  placeholder="Search articles..."
-                />
-              </label>
-            </section>
-
-            <section className="feSection" aria-label="Featured blog">
-              <div
-                className="feFeatured"
-                role="button"
-                tabIndex={0}
-                onClick={() => openBlog(featured)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') openBlog(featured)
-                }}
-              >
-                <div className="feFeatured__banner" aria-hidden="true">
-                  <img
-                    className="feFeatured__photo"
-                    src={
-                      featured.coverSrc ??
-                      'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
-                    }
-                    alt=""
-                    loading="eager"
-                    decoding="async"
-                    draggable={false}
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none'
-                    }}
-                  />
-                  <div className="feFeatured__photoScrim" />
-                </div>
-                <div className="feFeatured__body">
-                  <div className="feMetaRow">
-                    <span className="feTag">{featured.cat}</span>
-                    <span className="feTime">{featured.time}</span>
+            <>
+              <section className="feSection feNewsReplica" aria-label="News preview">
+                <div className="feNewsTicker" aria-label="Live market updates">
+                  <div ref={marketTickerRef} className="feNewsTicker__rail">
+                    {marketTickers.map((t) => {
+                      const up = t.change >= 0
+                      return (
+                        <div key={t.id} className="feNewsTicker__card">
+                          <div className="feNewsTicker__row">
+                            <div className="feNewsTicker__titleWrap">
+                              <span className="feNewsTicker__name">{t.label}</span>
+                              <span className="feNewsTicker__sub">{t.sub}</span>
+                            </div>
+                            <span className={`feNewsTicker__arrow${up ? ' is-up' : ' is-down'}`}>{up ? '↗' : '↘'}</span>
+                          </div>
+                          <div className="feNewsTicker__value">
+                            {t.prefix ?? ''}
+                            {Number(t.value).toLocaleString('en-IN', {
+                              minimumFractionDigits: t.compact ? 0 : 2,
+                              maximumFractionDigits: t.compact ? 0 : 2,
+                            })}
+                          </div>
+                          <div className={`feNewsTicker__delta${up ? ' is-up' : ' is-down'}`}>
+                            {up ? '+' : ''}
+                            {t.change}%
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
-                  <div className="feFeatured__title">{featured.title}</div>
-                  <div className="feFeatured__desc">{featured.desc}</div>
                 </div>
-              </div>
-            </section>
 
-            <section className="feSection" aria-label="Trending Now">
-              <div className="feSection__head">
-                <div className="feSection__title">Trending Now</div>
-              </div>
-              <div
-                className="feTrendingWrap"
-                data-reduce-motion={reduceMotion ? 'true' : 'false'}
-              >
-                <div
-                  ref={trendingScrollRef}
-                  className="feTrendingRow"
-                  aria-label="Trending articles carousel"
-                  onScroll={onTrendingScroll}
-                >
-                  {trending.map((t) => (
-                    <div
-                      key={t.id}
-                      className="feTrendingCard"
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => openBlog(t)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') openBlog(t)
-                      }}
-                    >
-                      <div className="feTrendingCard__media" aria-hidden="true">
-                        <img
-                          className="feTrendingCard__photo"
-                          src={
-                            t.coverSrc ??
-                            'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80'
-                          }
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                          draggable={false}
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                          }}
-                        />
-                        <div className="feTrendingCard__mediaScrim" />
-                      </div>
-                      <div className="feTrendingCard__body">
-                        <div className="feTrendingCard__title">{t.title}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="feTrendingDots" role="tablist" aria-label="Trending slides">
-                  {trending.map((t, i) => (
+                <div className="feNewsReplica__tabs" role="tablist" aria-label="News tabs">
+                  {['All News', 'Markets', 'Economy'].map((tab) => (
                     <button
-                      key={t.id}
+                      key={tab}
                       type="button"
                       role="tab"
-                      aria-selected={i === trendingSlideIdx}
-                      className={`feTrendingDot${i === trendingSlideIdx ? ' feTrendingDot--active' : ''}`}
-                      aria-label={`Slide ${i + 1}: ${t.title}`}
-                      onClick={() => goToTrendingSlide(i)}
-                    />
+                      aria-selected={homeNewsTab === tab}
+                      className={`feNewsReplica__tab${homeNewsTab === tab ? ' is-active' : ''}`}
+                      onClick={() => setHomeNewsTab(tab)}
+                    >
+                      {tab}
+                    </button>
                   ))}
                 </div>
-              </div>
-            </section>
 
-            <section className="feSection feSection--blogLatest" aria-label="Blog list">
-              <div className="feSection__head">
-                <div className="feSection__title">Latest</div>
-                <div className="feSection__sub feSection__sub--blogLatest">
-                  Curated reads — tap any article to open
-                </div>
-              </div>
-              <div className="feBlogList feBlogList--latest" aria-label="Articles">
-                {listPosts.map((p) => (
-                  <BlogBannerCard
-                    key={p.id}
-                    title={p.title}
-                    subtitle={p.desc}
-                    icon={blogIconFromCategory(p.cat)}
-                    coverSrc={p.coverSrc}
-                    meta={
-                      <span className="feMetaRow feMetaRow--blogBanner">
-                        <span className="feTag feTag--onDark">{p.cat}</span>
-                        <span className="feTime feTime--onDark">{p.time}</span>
-                      </span>
-                    }
-                    onClick={() => openBlog(p)}
-                  />
-                ))}
-              </div>
-            </section>
-          </>
-        ) : route === 'blog_detail' ? (
-          <ScreenShell title="Blog" subtitle="Read insights" onBack={goBack}>
-            <BlogDetailPage
-              article={blogSelected}
-              onShare={() => shareBlog(blogSelected)}
-            />
-          </ScreenShell>
-        ) : route === 'calculator' ? (
-          <CalculatorSection reduceMotion={reduceMotion} onBack={() => navigate('home')} />
-        ) : route === 'emi_calculator' ? (
-          <ScreenShell title="EMI Calculator" subtitle="Monthly EMI & breakdown" onBack={goBack}>
-            <EmiCalculatorPage reduceMotion={reduceMotion} />
-          </ScreenShell>
-        ) : route === 'sip_investment' ? (
-          <ScreenShell title="SIP Investment" subtitle="Plan long-term wealth" onBack={goBack}>
-            <SipInvestmentPage />
-          </ScreenShell>
-        ) : route === 'cibil' ? (
-          <ScreenShell
-            title="Your Credit Health"
-            subtitle="Track and improve your CIBIL score"
-            onBack={goBack}
-          >
-            <CibilPage
-              reduceMotion={reduceMotion}
-              hideTopHeader
-              onViewFullReport={() => navigate('full_credit_report')}
-            />
-          </ScreenShell>
-        ) : route === 'full_credit_report' ? (
-          <ScreenShell title="Full Credit Report" subtitle="Detailed credit profile" onBack={goBack}>
-            <FullCreditReportPage />
-          </ScreenShell>
-        ) : route === 'profile' ? (
-          <ProfilePage
-            reduceMotion={reduceMotion}
-            user={profileUser}
-            languageLabel={languageLabel}
-            onBack={() => navigate('home')}
-            onNavigate={(to) => navigate(to)}
-            onEditProfile={() => navigate('edit_profile')}
-            onOpenNotifications={() => navigate('notifications')}
-            onOpenSupport={() => navigate('support')}
-            onRequestLogout={() => setLogoutOpen(true)}
-          />
-        ) : route === 'edit_profile' ? (
-          <ScreenShell title="Edit Profile" subtitle="Update your details" onBack={goBack}>
-            <EditProfilePage
-              initialName={profileUser.name}
-              initialEmail={profileUser.email}
-              initialPhone={profileUser.phone}
-              onSave={(next) => {
-                setProfileUser(next)
-                try {
-                  localStorage.setItem('fe_profile', JSON.stringify(next))
-                } catch {
-                  /* ignore */
-                }
-              }}
-            />
-          </ScreenShell>
-        ) : route === 'linked_accounts' ? (
-          <ScreenShell title="Linked Accounts" subtitle="Banks & cards you have connected" onBack={goBack}>
-            <LinkedAccountsPage />
-          </ScreenShell>
-        ) : route === 'language' ? (
-          <ScreenShell title="Language" subtitle="Choose app language" onBack={goBack}>
-            <LanguagePage
-              initialCode={appLanguage}
-              onApply={(code) => {
-                setAppLanguage(code)
-                try {
-                  localStorage.setItem('fe_language', code)
-                } catch {
-                  /* ignore */
-                }
-              }}
-            />
-          </ScreenShell>
-        ) : route === 'support' ? (
-          <ScreenShell title="Help & Support" subtitle="FAQs and contact support" onBack={goBack}>
-            <SupportPage />
-          </ScreenShell>
-        ) : route === 'mutual_funds' ? (
-          <ScreenShell
-            title="Mutual Funds"
-            subtitle="Explore funds and start investing"
-            onBack={goBack}
-          >
-            <MutualFundsPage
-              onSelectFund={(id) => {
-                setMfSelectedId(id)
-                navigate('mutual_funds_detail')
-              }}
-            />
-          </ScreenShell>
-        ) : route === 'mutual_funds_detail' ? (
-          <ScreenShell title="Fund Details" subtitle="Returns, risk and highlights" onBack={goBack}>
-            <MutualFundDetailPage fundId={mfSelectedId} />
-          </ScreenShell>
-        ) : route === 'insurance' ? (
-          <ScreenShell title="Insurance" subtitle="Plans for every need" onBack={goBack}>
-            <InsurancePage
-              onSelectType={(id) => {
-                setInsSelectedId(id)
-                navigate('insurance_detail')
-              }}
-              onExplore={(id) => {
-                setInsSelectedId(id)
-                navigate('insurance_explorer')
-              }}
-            />
-          </ScreenShell>
-        ) : route === 'insurance_detail' ? (
-          <ScreenShell title="Insurance" subtitle="Compare plans and benefits" onBack={goBack}>
-            <InsuranceDetailPage
-              typeId={insSelectedId}
-              onExplorePlans={() => navigate('insurance_explorer')}
-            />
-          </ScreenShell>
-        ) : route === 'insurance_explorer' ? (
-          <ScreenShell title="Insurance Plans" subtitle="Compare & buy instantly" onBack={goBack}>
-            <InsuranceExplorerPage typeId={insSelectedId} />
-          </ScreenShell>
-        ) : route === 'bonds' ? (
-          <ScreenShell title="Bonds" subtitle="Safer fixed-income options" onBack={goBack}>
-            <BondsPage />
-          </ScreenShell>
-        ) : route === 'savings' ? (
-          <ScreenShell title="Savings" subtitle="Plans to grow steadily" onBack={goBack}>
-            <SavingsPlansPage />
-          </ScreenShell>
-        ) : route === 'loans' ? (
-          <ScreenShell title="Loans" subtitle="Quick approval from partners" onBack={goBack}>
-            <LoansPage
-              onExplorePersonal={() => navigate('personal_loan_explorer')}
-              onOpenEligibility={() => navigate('eligibility_form')}
-            />
-          </ScreenShell>
-        ) : route === 'personal_loan_explorer' ? (
-          <ScreenShell title="Personal Loan" subtitle="Offers from banks" onBack={goBack}>
-            <PersonalLoanExplorerPage />
-          </ScreenShell>
-        ) : route === 'eligibility_form' ? (
-          <ScreenShell title="Eligibility" subtitle="Quick eligibility check" onBack={goBack}>
-            <EligibilityFormPage />
-          </ScreenShell>
-        ) : route === 'application_form' ? (
-          <ScreenShell title="Apply" subtitle="Application form" onBack={goBack}>
-            <ApplicationFormPage />
-          </ScreenShell>
-        ) : route === 'notifications' ? (
-          <ScreenShell title="Notifications" subtitle="Offers, alerts & updates" onBack={goBack}>
-            <NotificationsPage />
-          </ScreenShell>
-        ) : route === 'account' ? (
-          <ScreenShell title="Account" subtitle="Your profile & shortcuts" onBack={goBack}>
-            <AccountPage
-              onOpenProfile={() => navigate('profile')}
-              onOpenCibil={() => navigate('cibil')}
-              onOpenApplication={() => navigate('application_form')}
-            />
-          </ScreenShell>
-        ) : route === 'credit_cards' ? (
-          <ScreenShell title="Credit Cards" subtitle="Compare offers and benefits" onBack={goBack}>
-            <CreditCardDetailPage cardId={ccSelectedId} />
-          </ScreenShell>
-        ) : route === 'credit_card_offers' ? (
-          <ScreenShell title="Credit Card Offers" subtitle="Cashback, rewards & perks" onBack={goBack}>
-            <CreditCardOffersPage
-              onSelectCard={(id) => {
-                setCcSelectedId(id)
-                navigate('credit_cards')
-              }}
-            />
-          </ScreenShell>
-        ) : route !== 'home' ? (
-          <ScreenShell title="FinExpert" subtitle="Screen coming soon" onBack={goBack}>
-            <div className="fePlaceholderPage">
-              <div className="fePlaceholderBlock" />
-              <div className="fePlaceholderBlock" />
-            </div>
-          </ScreenShell>
-        ) : (
-          <>
-            <section className="feSection" aria-label="Stories">
-              <div className="feSection__head">
-                <div>
-                  <div className="feSection__title">Stories</div>
-                  <p className="feSection__sub">Tap a profile to watch video stories</p>
-                </div>
-              </div>
-
-              <div className="feStories" role="list" aria-label="Admin updates list">
-                {statuses.map((s, idx) => {
-                  const isNew = !seenStatusIds.has(s.id)
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      className="feStory"
-                      onClick={() => openStoryAt(idx)}
-                      aria-label={`Open ${s.name} updates`}
-                    >
-                      <span
-                        className={`feStory__ring ${isNew ? 'is-new' : 'is-seen'}`}
-                        aria-hidden="true"
-                      >
-                        <StoryAvatarImg
-                          name={s.name}
-                          src={s.avatarUrl}
-                          className="feStory__avatarImg"
-                          width={200}
-                          height={200}
-                          loading="lazy"
-                        />
-                      </span>
-                      <span className="feStory__name">{s.name}</span>
-                    </button>
-                  )
-                })}
-              </div>
-            </section>
-
-        <section className="feSection" aria-label="Quick Actions">
-          <div className="feSection__head feSection__head--split">
-            <div className="feSection__title">Quick Actions</div>
-            <button type="button" className="feTextBtn" onClick={() => navigate('sip_investment')}>
-              View All
-            </button>
-          </div>
-
-          <div className="feQuickBento" role="list" aria-label="Quick actions">
-            <div className="feQuickBento__heroRow">
-              <button
-                type="button"
-                className="feQuickBento__mf"
-                aria-label="Mutual Funds — expert curated baskets"
-                onClick={() => navigate('mutual_funds')}
-              >
-                <FeQuickPhotoBg src={FE_QUICK_UNSPLASH.mutualFunds} tone="mf" loading="eager" />
-                <span className="feQuickBento__mfIcon" aria-hidden="true">
-                  <NavIcon name="trending" />
-                </span>
-                <span className="feQuickBento__mfTitle">Mutual Funds</span>
-                <span className="feQuickBento__mfSub">Expert curated baskets</span>
-                <span className="feQuickBento__mfStat">
-                  <span className="feQuickBento__mfBolt" aria-hidden="true">
-                    ⚡
-                  </span>
-                  +14.2% p.a.
-                </span>
-              </button>
-
-              <div className="feQuickBento__rail">
-                <button
-                  type="button"
-                  className="feQuickBento__ins"
-                  aria-label="Insurance"
-                  onClick={() => navigate('insurance')}
-                >
-                  <FeQuickPhotoBg src={FE_QUICK_UNSPLASH.insurance} tone="ins" loading="eager" />
-                  <span className="feQuickBento__insIcon" aria-hidden="true">
-                    <NavIcon name="shield" />
-                  </span>
-                  <span className="feQuickBento__insTitle">Insurance</span>
+                <button type="button" className="feNewsReplica__lead" onClick={() => openBlog(asBlogPost(homeNewsLead))}>
+                  <div className="feNewsReplica__leadMedia">
+                    <div className="feNewsReplica__leadBadge">TOP STORY</div>
+                    <img src={homeNewsLead.cover} alt="" loading="lazy" decoding="async" />
+                  </div>
+                  <div className="feNewsReplica__leadBody">
+                    <div className="feNewsReplica__meta">
+                      <span className="feNewsReplica__tag">{homeNewsLead.tag}</span>
+                      <span>{homeNewsLead.time}</span>
+                    </div>
+                    <div className="feNewsReplica__leadTitle">{homeNewsLead.title}</div>
+                    <div className="feNewsReplica__leadSub">{homeNewsLead.source}</div>
+                  </div>
                 </button>
-                <button
-                  type="button"
-                  className="feQuickBento__fd"
-                  aria-label="Fixed Deposit"
-                  onClick={() => navigate('savings')}
-                >
-                  <FeQuickPhotoBg src={FE_QUICK_UNSPLASH.fixedDeposit} tone="fd" loading="eager" />
-                  <span className="feQuickBento__fdIcon" aria-hidden="true">
-                    <NavIcon name="lock" />
-                  </span>
-                  <span className="feQuickBento__fdTitle">Fixed Deposit</span>
-                </button>
-              </div>
-            </div>
 
-            <button
-              type="button"
-              className="feQuickBento__offer"
-              aria-label="Independence offer — extra APY on senior citizen FDs"
-              onClick={() => navigate('savings')}
-            >
-              <div className="feQuickBento__offerText">
-                <span className="feQuickBento__offerKicker">Independence offer</span>
-                <span className="feQuickBento__offerHeadline">Extra 1.5% APY</span>
-                <span className="feQuickBento__offerSub">On Senior Citizen FDs</span>
-              </div>
-              <span className="feQuickBento__offerArt" aria-hidden="true">
-                <NavIcon name="party" />
-              </span>
-            </button>
-
-            <button
-              type="button"
-              className="feQuickBento__guaranteed"
-              aria-label="Guaranteed saving plan — tax-free maturity benefits"
-              onClick={() => navigate('savings')}
-            >
-              <div className="feQuickBento__guaranteedLeft">
-                <span className="feQuickBento__badge">
-                  <span aria-hidden="true">✓</span> Tax free savings
-                </span>
-                <span className="feQuickBento__guaranteedTitle">Guaranteed Saving Plan</span>
-                <span className="feQuickBento__guaranteedDesc">
-                  Secure your family&apos;s future with tax-free maturity benefits
-                </span>
-                <span className="feQuickBento__guaranteedCta">Explore Plan</span>
-              </div>
-              <div className="feQuickBento__guaranteedGold" aria-hidden="true">
-                <img
-                  className="feQuickBento__guaranteedPhoto"
-                  src={FE_QUICK_UNSPLASH.guaranteedPlan}
-                  alt=""
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                  draggable={false}
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none'
-                  }}
-                />
-                <span className="feQuickBento__guaranteedScrim" />
-              </div>
-            </button>
-
-            <div className="feQuickBento__duoRow">
-              <button
-                type="button"
-                className="feQuickBento__duo feQuickBento__duo--bonds"
-                aria-label="Bonds — corporate and government"
-                onClick={() => navigate('bonds')}
-              >
-                <FeQuickPhotoBg src={FE_QUICK_UNSPLASH.bonds} tone="duoBonds" />
-                <span className="feQuickBento__duoIcon" aria-hidden="true">
-                  <NavIcon name="doc" />
-                </span>
-                <span className="feQuickBento__duoTitle">Bonds</span>
-                <span className="feQuickBento__duoSub">Corporate &amp; Govt</span>
-              </button>
-              <button
-                type="button"
-                className="feQuickBento__duo feQuickBento__duo--savings"
-                aria-label="Savings plans — high interest accounts"
-                onClick={() => navigate('savings')}
-              >
-                <FeQuickPhotoBg src={FE_QUICK_UNSPLASH.savingsDuo} tone="duoSav" />
-                <span className="feQuickBento__duoIcon" aria-hidden="true">
-                  <NavIcon name="pig" />
-                </span>
-                <span className="feQuickBento__duoTitle">Savings</span>
-                <span className="feQuickBento__duoSub">High interest acc.</span>
-              </button>
-            </div>
-
-            <div className="feQuickBento__toolsRow">
-              <button
-                type="button"
-                className="feQuickBento__tool"
-                aria-label="EMI Calculator"
-                onClick={() => navigate('emi_calculator')}
-              >
-                <FeQuickPhotoBg src={FE_QUICK_UNSPLASH.emiTool} tone="tool" />
-                <span className="feQuickBento__toolGlow" aria-hidden="true">
-                  <NavIcon name="calculator" />
-                </span>
-                <span className="feQuickBento__toolLabel">EMI Calculator</span>
-              </button>
-              <button
-                type="button"
-                className="feQuickBento__tool"
-                aria-label="Credit Cards"
-                onClick={() => navigate('credit_cards')}
-              >
-                <FeQuickPhotoBg src={FE_QUICK_UNSPLASH.creditTool} tone="tool" />
-                <span className="feQuickBento__toolGlow" aria-hidden="true">
-                  <NavIcon name="card" />
-                </span>
-                <span className="feQuickBento__toolLabel">Credit Cards</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <section className="feSection" aria-label="Offers carousel">
-          <div className="feSection__head">
-            <div className="feSection__title">Offers</div>
-          </div>
-
-          <div className="feCarousel" aria-roledescription="carousel" aria-label="Banner carousel">
-            <div
-              className="feCarousel__track"
-              style={{ transform: `translateX(${-bannerIdx * 100}%)` }}
-            >
-                {banners.map((b) => (
-                  <div key={b.id} className="feBanner feBanner--premium">
-                    <span className="feBanner__photoWrap" aria-hidden="true">
-                      <img
-                        className="feBanner__photoImg"
-                        src={b.coverSrc}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        draggable={false}
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none'
-                        }}
-                      />
-                      <span className="feBanner__photoScrim" />
-                    </span>
-                    <div className="feBanner__glass" aria-hidden="true" />
-                    <div className="feBanner__sheen" aria-hidden="true" />
-                    <div className="feBanner__overlay">
-                      <div className="feBanner__row">
-                        <span className="feBanner__iconWrap">
-                          <NavIcon name={b.icon} />
-                        </span>
-                        <div className="feBanner__copy">
-                          <div className="feBanner__title">{b.title}</div>
-                          <div className="feBanner__text">{b.text}</div>
+                <div className="feNewsReplica__list">
+                  {homeNewsList.map((item) => (
+                    <button key={item.id} type="button" className="feNewsReplica__item" onClick={() => openBlog(asBlogPost(item))}>
+                      <div className="feNewsReplica__itemBody">
+                        <div className="feNewsReplica__itemTag">{item.tag}</div>
+                        <div className="feNewsReplica__itemTitle">{item.title}</div>
+                        <div className="feNewsReplica__itemMeta">
+                          {item.time} • {item.source}
                         </div>
                       </div>
+                      <img className="feNewsReplica__itemThumb" src={item.cover} alt="" loading="lazy" decoding="async" />
+                    </button>
+                  ))}
+                </div>
+
+                <div className="feNewsReplica__promo">
+                  <div className="feNewsReplica__promoEyebrow">SILKLEND EXCLUSIVE</div>
+                  <div className="feNewsReplica__promoTitle">Earn up to 7.5% p.a. with Silk Savings</div>
+                  <div className="feNewsReplica__promoSub">
+                    Open a premium savings account instantly with zero paperwork and premium concierge services.
+                  </div>
+                  <button type="button" className="feNewsReplica__promoBtn">
+                    Join Now
+                  </button>
+                </div>
+
+                <div className="feNewsReplica__insights">
+                  <div className="feNewsReplica__insightsTitle">Market Insights</div>
+                  <div className="feNewsReplica__insightsList">
+                    {homeNewsInsights.map((ins) => (
+                      <div key={ins.id} className="feNewsReplica__insight">
+                        <span className="feNewsReplica__insightIcon" aria-hidden="true">
+                          <NavIcon name={ins.icon} size={15} />
+                        </span>
+                        <div className="feNewsReplica__insightBody">
+                          <div className="feNewsReplica__insightText">{ins.title}</div>
+                          <div className="feNewsReplica__insightMeta">
+                            {ins.date} <span>{ins.cat}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="feNewsReplica__cta">
+                  <div>
+                    <div className="feNewsReplica__ctaTitle">Build your wealth journey with Silk Invest</div>
+                    <div className="feNewsReplica__ctaSub">
+                      Open a FREE Demat account. Zero brokerage for the first 30 days.
+                    </div>
+                    <button type="button" className="feNewsReplica__ctaBtn">
+                      Get Started
+                    </button>
+                  </div>
+                  <div className="feNewsReplica__ctaIcon" aria-hidden="true">
+                    <NavIcon name="trending" size={26} />
+                  </div>
+                </div>
+              </section>
+            </>
+          ) : route === 'blog_detail' ? (
+            <ScreenShell title="News" subtitle="Read insights" onBack={goBack}>
+              <BlogDetailPage
+                article={blogSelected}
+                onShare={() => shareBlog(blogSelected)}
+              />
+            </ScreenShell>
+          ) : route === 'calculator' ? (
+            <CalculatorSection
+              onNavigate={(to) => navigate(to)}
+              onNotifications={() => navigate('notifications')}
+            />
+          ) : route === 'income_tax_calc' ? (
+            <ScreenShell title="Income Tax" subtitle="Quick estimate (not tax advice)" onBack={goBack}>
+              <IncomeTaxCalculatorPage />
+            </ScreenShell>
+          ) : route === 'gratuity_calc' ? (
+            <ScreenShell title="Gratuity" subtitle="Retirement benefit estimate" onBack={goBack}>
+              <GratuityCalculatorPage />
+            </ScreenShell>
+          ) : route === 'fixed_deposit_calc' ? (
+            <ScreenShell title="Fixed Deposit" subtitle="Secure returns estimate" onBack={goBack}>
+              <FixedDepositCalculatorPage />
+            </ScreenShell>
+          ) : route === 'fixed_deposit_soon' ? (
+            <ScreenShell title="" subtitle="" onBack={goBack}>
+              <div className="feCibilPage" aria-label="Fixed Deposit coming soon">
+                <section className="feCibilSoon" aria-label="Fixed Deposit coming soon card">
+                  <div className="feCibilSoon__badge" aria-hidden="true">
+                    <span className="feCibilSoon__dot" />
+                    FIXED DEPOSIT
+                  </div>
+                  <div className="feCibilSoon__icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="4" y="11" width="16" height="10" rx="2.5" />
+                      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                      <path d="M12 16v2" />
+                    </svg>
+                  </div>
+                  <div className="feCibilSoon__title">
+                    Coming <span className="feCibilSoon__titleAccent">Soon</span>
+                  </div>
+                  <div className="feCibilSoon__sub">
+                    Fixed Deposit plans with secure returns, bank-wise rates, and maturity projections will be available shortly.
+                  </div>
+                  <div className="feCibilSoon__points" aria-label="Upcoming Fixed Deposit features">
+                    <span className="feCibilSoon__point">Bank-wise latest FD rates</span>
+                    <span className="feCibilSoon__point">Maturity and payout projections</span>
+                    <span className="feCibilSoon__point">Tenure comparison insights</span>
+                  </div>
+                  <button type="button" className="feBtn feBtn--primary feBtn--full">
+                    Notify Me
+                  </button>
+                </section>
+              </div>
+            </ScreenShell>
+          ) : route === 'ppf_calc' ? (
+            <ScreenShell title="PPF Calculator" subtitle="Plan your wealth with precision" onBack={goBack}>
+              <PpfCalculatorPage />
+            </ScreenShell>
+          ) : route === 'rd_calc' ? (
+            <ScreenShell title="RD" subtitle="Recurring deposit projection" onBack={goBack}>
+              <RdCalculatorPage />
+            </ScreenShell>
+          ) : route === 'lumpsum_calc' ? (
+            <ScreenShell title="Lumpsum" subtitle="One-time investment growth" onBack={goBack}>
+              <LumpsumCalculatorPage />
+            </ScreenShell>
+          ) : route === 'goal_planner_calc' ? (
+            <ScreenShell title="Goal Planner" subtitle="Monthly saving needed for goals" onBack={goBack}>
+              <GoalPlannerPage />
+            </ScreenShell>
+          ) : route === 'home_loan_emi_calc' ? (
+            <ScreenShell title="" subtitle="" onBack={goBack} showBand={false}>
+              <HomeLoanPage />
+            </ScreenShell>
+          ) : route === 'car_loan_emi_calc' ? (
+            <ScreenShell title="Car Loan EMI" subtitle="Monthly EMI & breakdown" onBack={goBack}>
+              <EmiCalculatorPage reduceMotion={reduceMotion} />
+            </ScreenShell>
+          ) : route === 'emi_calculator' ? (
+            <ScreenShell title="EMI Calculator" subtitle="Monthly EMI & breakdown" onBack={goBack}>
+              <EmiCalculatorPage reduceMotion={reduceMotion} />
+            </ScreenShell>
+          ) : route === 'sip_investment' ? (
+            <ScreenShell title="SIP Calculator" subtitle="Plan your wealth with precision" onBack={goBack}>
+              <SipInvestmentPage onInvestNow={() => navigate('application_form')} />
+            </ScreenShell>
+          ) : route === 'cibil' ? (
+            <ScreenShell
+              title=""
+              subtitle=""
+              onBack={goBack}
+              showBand={false}
+            >
+              <CibilPage
+                reduceMotion={reduceMotion}
+                hideTopHeader
+                onViewFullReport={() => navigate('full_credit_report')}
+              />
+            </ScreenShell>
+          ) : route === 'full_credit_report' ? (
+            <ScreenShell title="Full Credit Report" subtitle="Detailed credit profile" onBack={goBack} showBand={false}>
+              <FullCreditReportPage />
+            </ScreenShell>
+          ) : route === 'profile' ? (
+            <ProfilePage
+              reduceMotion={reduceMotion}
+              user={profileUser}
+              languageLabel={languageLabel}
+              onBack={() => navigate('home')}
+              onNavigate={(to) => navigate(to)}
+              onEditProfile={() => navigate('edit_profile')}
+              onOpenNotifications={() => navigate('notifications')}
+              onOpenSupport={() => navigate('support')}
+              onRequestLogout={() => setLogoutOpen(true)}
+            />
+          ) : route === 'edit_profile' ? (
+            <ScreenShell title="Edit Profile" subtitle="Update your details" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <EditProfilePage
+                initialName={profileUser.name}
+                initialEmail={profileUser.email}
+                initialPhone={profileUser.phone}
+                onSave={(next) => {
+                  setProfileUser(next)
+                  try {
+                    localStorage.setItem('fe_profile', JSON.stringify(next))
+                  } catch {
+                    /* ignore */
+                  }
+                }}
+              />
+            </ScreenShell>
+          ) : route === 'linked_accounts' ? (
+            <ScreenShell title="Linked Accounts" subtitle="Banks & cards you have connected" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <LinkedAccountsPage />
+            </ScreenShell>
+          ) : route === 'language' ? (
+            <ScreenShell title="Language" subtitle="Choose app language" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <LanguagePage
+                initialCode={appLanguage}
+                onApply={(code) => {
+                  setAppLanguage(code)
+                  try {
+                    localStorage.setItem('fe_language', code)
+                  } catch {
+                    /* ignore */
+                  }
+                }}
+              />
+            </ScreenShell>
+          ) : route === 'support' ? (
+            <ScreenShell title="Help & Support" subtitle="FAQs and contact support" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <SupportPage />
+            </ScreenShell>
+          ) : route === 'mutual_funds' ? (
+            <MutualFundsPage onNavigate={(to) => navigate(to)} />
+          ) : route === 'mutual_funds_detail' ? (
+            <ScreenShell title="Fund Details" subtitle="Returns, risk and highlights" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <MutualFundDetailPage fundId={mfSelectedId} />
+            </ScreenShell>
+          ) : route === 'insurance' ? (
+            <ScreenShell title="" subtitle="" onBack={goBack} showBand={false} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <InsurancePage
+                onSelectType={(id) => {
+                  setInsSelectedId(id)
+                  navigate('insurance_detail')
+                }}
+                onExplore={(id) => {
+                  setInsSelectedId(id)
+                  navigate('insurance_explorer')
+                }}
+              />
+            </ScreenShell>
+          ) : route === 'insurance_detail' ? (
+            <ScreenShell title="" subtitle="" onBack={goBack} showBand={false} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <InsuranceDetailPage
+                typeId={insSelectedId}
+                onExplorePlans={() => navigate('insurance_explorer')}
+              />
+            </ScreenShell>
+          ) : route === 'insurance_explorer' ? (
+            <ScreenShell title="" subtitle="" onBack={goBack} showBand={false} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <InsuranceExplorerPage typeId={insSelectedId} />
+            </ScreenShell>
+          ) : route === 'bonds' ? (
+            <ScreenShell title="Bonds" subtitle="Safer fixed-income options" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <BondsPage />
+            </ScreenShell>
+          ) : route === 'savings' ? (
+            <ScreenShell title="Savings" subtitle="Plans to grow steadily" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <SavingsPlansPage />
+            </ScreenShell>
+          ) : route === 'taxation' ? (
+            <TaxationScreen onBack={goBack} />
+          ) : route === 'loans' ? (
+            <LoansPage />
+          ) : route === 'personal_loan_explorer' || route === 'business_loan_explorer' ? (
+            <ScreenShell
+              title={route === 'business_loan_explorer' ? 'Business Loan' : 'Personal Loan'}
+              subtitle={route === 'business_loan_explorer' ? 'Working capital & growth finance' : 'Instant fintech & verified bank partners'}
+              onBack={goBack}
+              showBand={false}
+            >
+              <PersonalLoanExplorerPage mode={route === 'business_loan_explorer' ? 'business' : 'personal'} />
+            </ScreenShell>
+          ) : route === 'credit_card_eligibility' ? (
+            <ScreenShell title="Credit Cards" subtitle="Exclusive offers for you" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <CreditCardEligibilityPage />
+            </ScreenShell>
+          ) : route === 'eligibility_form' ? (
+            <ScreenShell title="Eligibility" subtitle="Quick eligibility check" onBack={goBack} showBand={false} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <EligibilityFormPage />
+            </ScreenShell>
+          ) : route === 'application_form' ? (
+            <ScreenShell title="Apply" subtitle="Application form" onBack={goBack} showBand={false} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <ApplicationFormPage />
+            </ScreenShell>
+          ) : route === 'notifications' ? (
+            <ScreenShell title="Notifications" subtitle="Offers, alerts & updates" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <NotificationsPage />
+            </ScreenShell>
+          ) : route === 'account' ? (
+            <ScreenShell title="Account" subtitle="Your profile & shortcuts" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <AccountPage
+                onOpenProfile={() => navigate('profile')}
+                onOpenCibil={() => navigate('cibil')}
+                onOpenApplication={() => navigate('application_form')}
+              />
+            </ScreenShell>
+          ) : route === 'credit_cards' ? (
+            <CreditCardDetailPage cardId={ccSelectedId} />
+          ) : route === 'credit_card_offers' ? (
+            <ScreenShell title="Credit Card Offers" subtitle="Cashback, rewards & perks" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <CreditCardOffersPage
+                onSelectCard={(id) => {
+                  setCcSelectedId(id)
+                  navigate('credit_cards')
+                }}
+              />
+            </ScreenShell>
+          ) : route !== 'home' ? (
+            <ScreenShell title="FinExpert" subtitle="Screen coming soon" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <div className="fePlaceholderPage">
+                <div className="fePlaceholderBlock" />
+                <div className="fePlaceholderBlock" />
+              </div>
+            </ScreenShell>
+          ) : (
+            <>
+              <section className="feSection feSection--premiumPromo" aria-label="Premium access">
+                <button
+                  type="button"
+                  className="fePremiumPromo"
+                  onClick={() => navigate('mutual_funds')}
+                >
+                  <span className="fePremiumPromo__badge">PREMIUM ACCESS</span>
+                  <h2 className="fePremiumPromo__title">
+                    FinExpert: Your and Your Family&apos;s All-in-One Financial App
+                  </h2>
+                  <span className="fePremiumPromo__cta">
+                    Explore Private Wealth <span aria-hidden="true">›</span>
+                  </span>
+                  <span className="fePremiumPromo__deco" aria-hidden="true">
+                    <svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M60 8L20 28v42c0 32 18 52 40 60 22-8 40-28 40-60V28L60 8z"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        opacity="0.22"
+                      />
+                      <circle cx="60" cy="58" r="18" stroke="currentColor" strokeWidth="2.5" opacity="0.18" />
+                    </svg>
+                  </span>
+                </button>
+              </section>
+
+              <section className="feSection" aria-label="Our Products">
+                <div className="feSection__head feSection__head--split">
+                  <div className="feSection__title">Our Products</div>
+                </div>
+
+                <div className="feQuickBento" role="list" aria-label="Wealth solutions">
+                  <div className="feQuickBento__heroRow">
+                    <button
+                      type="button"
+                      className="feQuickBento__mf"
+                      aria-label="Mutual Funds — expert curated baskets"
+                      onClick={() => navigate('mutual_funds')}
+                    >
+                      <span className="feQuickBento__mfIcon" aria-hidden="true">
+                        <NavIcon name="mfChart" size={28} strokeWidth={2.25} />
+                      </span>
+                      <span className="feQuickBento__mfTitle">Mutual Funds</span>
+                      <span className="feQuickBento__mfSub">Expert curated baskets</span>
+                      <span className="feQuickBento__mfStat">
+                        +14.2% p.a
+                      </span>
+                    </button>
+
+                    <div className="feQuickBento__rail">
                       <button
                         type="button"
-                        className="feBtn feBtn--primary feBanner__cta"
-                        onClick={() => {
-                          if (b.id === 'cc') navigate('credit_card_offers')
-                          else if (b.id === 'fd') navigate('savings')
-                          else navigate('mutual_funds')
-                        }}
+                        className="feQuickBento__ins"
+                        aria-label="Insurance"
+                        onClick={() => navigate('insurance')}
                       >
-                        Explore
+                        <span className="feQuickBento__insIcon" aria-hidden="true">
+                          <NavIcon name="shield" size={28} strokeWidth={2.25} />
+                        </span>
+                        <span className="feQuickBento__insTitle">Insurance</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="feQuickBento__duo feQuickBento__duo--tax"
+                        style={{ flex: 1, minHeight: 0, borderRadius: '24px' }}
+                        aria-label="Taxation — filing and compliance"
+                        onClick={() => navigate('taxation')}
+                      >
+                        <span className="feQuickBento__duoIcon" aria-hidden="true">
+                          <NavIcon name="tax" size={28} strokeWidth={2.25} />
+                        </span>
+                        <span className="feQuickBento__duoTitle">Taxation</span>
                       </button>
                     </div>
                   </div>
-                ))}
-            </div>
-            <div className="feDots" role="tablist" aria-label="Carousel dots">
-              {banners.map((b, idx) => (
-                <button
-                  key={b.id}
-                  type="button"
-                  className={`feDot ${idx === bannerIdx ? 'is-active' : ''}`}
-                  onClick={() => setBannerIdx(idx)}
-                  aria-label={`Go to banner ${idx + 1}`}
-                  aria-selected={idx === bannerIdx}
-                  role="tab"
-                />
-              ))}
-            </div>
-          </div>
-        </section>
 
-        <section className="feSection" aria-label="CIBIL score">
-          <div
-            className={`feCibil feCibil--premium card${homeCibilRefreshing ? ' is-refreshing' : ''}`}
-          >
-            <div className="feCibil__mesh" aria-hidden="true" />
-            <div className="feCibil__glow feCibil__glow--a" aria-hidden="true" />
-            <div className="feCibil__glow feCibil__glow--b" aria-hidden="true" />
-            <div className="feCibil__inner">
-              <div className="feCibil__left">
-                <div className="feCibil__head">
-                  <span className="feCibil__iconWrap" aria-hidden="true">
-                    <NavIcon name="shield" />
-                  </span>
-                  <div className="feCibil__headText">
-                    <div className="feCibil__title">CIBIL Score</div>
-                    <div className="feCibil__kicker">Credit health · 300 – 900</div>
-                  </div>
-                </div>
-                <span className={`feCibil__badge feCibil__badge--${cibil.band}`}>
-                  {cibil.label}
-                </span>
-                <p className="feCibil__hint">Higher scores unlock better loan and card offers.</p>
-                <button
-                  type="button"
-                  className="feCibil__btn"
-                  onClick={refreshHomeCibil}
-                  disabled={homeCibilRefreshing}
-                >
-                  {homeCibilRefreshing ? (
-                    <span className="feCibil__btnInner feCibil__btnInner--loading">
-                      <span className="feSpinner" aria-hidden="true" />
-                      Refreshing…
-                    </span>
-                  ) : (
-                    <span className="feCibil__btnInner">
-                      <span className="feCibil__btnIcon" aria-hidden="true">
-                        <NavIcon name="refresh" />
+                  <div className="feQuickBento__duoRow">
+                    <button
+                      type="button"
+                      className="feQuickBento__duo feQuickBento__duo--bonds"
+                      aria-label="Bonds — corporate and government"
+                      onClick={() => navigate('bonds')}
+                    >
+                      <span className="feQuickBento__duoIcon" aria-hidden="true">
+                        <NavIcon name="doc" size={26} strokeWidth={2.2} />
                       </span>
-                      Refresh Score
-                    </span>
-                  )}
-                </button>
-              </div>
-
-              <div className="feCibil__right" aria-label="CIBIL indicator">
-                <div
-                  className={`feRing feRing--premium ${homeCibilAnimate ? 'is-animate' : ''}`}
-                  data-band={cibil.band}
-                  style={{ '--p': cibil.pct, '--ring': cibil.color }}
-                >
-                  <svg className="feRing__svg" viewBox="0 0 120 120" aria-hidden="true">
-                    <defs>
-                      <linearGradient
-                        id="feHomeCibilGradGood"
-                        x1="15%"
-                        y1="85%"
-                        x2="85%"
-                        y2="15%"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop offset="0%" stopColor="#0d9488" />
-                        <stop offset="55%" stopColor="#22c55e" />
-                        <stop offset="100%" stopColor="#4ade80" />
-                      </linearGradient>
-                      <linearGradient
-                        id="feHomeCibilGradMid"
-                        x1="10%"
-                        y1="90%"
-                        x2="90%"
-                        y2="10%"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop offset="0%" stopColor="#ea580c" />
-                        <stop offset="50%" stopColor="#f59e0b" />
-                        <stop offset="100%" stopColor="#fbbf24" />
-                      </linearGradient>
-                      <linearGradient
-                        id="feHomeCibilGradLow"
-                        x1="0%"
-                        y1="100%"
-                        x2="100%"
-                        y2="0%"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop offset="0%" stopColor="#b91c1c" />
-                        <stop offset="55%" stopColor="#ef4444" />
-                        <stop offset="100%" stopColor="#fb923c" />
-                      </linearGradient>
-                    </defs>
-                    <circle className="feRing__track" cx="60" cy="60" r="46" />
-                    <circle
-                      className="feRing__progress"
-                      cx="60"
-                      cy="60"
-                      r="46"
-                      pathLength="100"
-                      style={{ stroke: `url(#${cibil.gradId})` }}
-                    />
-                  </svg>
-                  <div className="feRing__center">
-                    <div className="feRing__score">{homeCibilScore}</div>
-                    <div className="feRing__meta">out of 900</div>
+                      <span className="feQuickBento__duoTitle">Bonds</span>
+                      <span className="feQuickBento__duoSub">Corporate &amp; Govt</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="feQuickBento__fd"
+                      style={{ minHeight: '92px', borderRadius: '20px' }}
+                      aria-label="Fixed Deposit"
+                      onClick={() => navigate('fixed_deposit_soon')}
+                    >
+                      <span className="feQuickBento__fdIcon" aria-hidden="true">
+                        <NavIcon name="lock" size={26} strokeWidth={2.2} />
+                      </span>
+                      <span className="feQuickBento__fdTitle">Fixed Deposit</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="feQuickBento__duo feQuickBento__duo--cards"
+                      aria-label="Credit Cards"
+                      onClick={() => navigate('credit_cards')}
+                    >
+                      <span className="feQuickBento__duoIcon" aria-hidden="true">
+                        <NavIcon name="card" size={26} strokeWidth={2.2} />
+                      </span>
+                      <span className="feQuickBento__duoTitle">Credit Cards</span>
+                      <span className="feQuickBento__duoSub">&nbsp;</span>
+                    </button>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
-        {homeCibilToast ? (
-          <div className="feToast" role="status" aria-live="polite">
-            {homeCibilToast}
-          </div>
-        ) : null}
+                  <div className="feExploreSlider" aria-label="Explore Financial Products">
+                    <div className="feExploreSlider__title">Explore Financial Products</div>
 
-        <section className="feSection" aria-label="Financial categories">
-          <div className="feSection__head">
-            <div className="feSection__title">Categories</div>
-          </div>
+                    <div
+                      ref={exploreRailRef}
+                      className="feExploreSlider__rail"
+                      aria-label="Product slider"
+                      role="list"
+                      data-swiping={exploreSwiping ? 'true' : 'false'}
+                      onScroll={onExploreScroll}
+                      onTouchStart={() => {
+                        pauseExplore()
+                      }}
+                      onTouchEnd={() => {
+                        scheduleExploreResume()
+                      }}
+                      onMouseEnter={() => {
+                        pauseExplore()
+                      }}
+                    >
+                      {exploreProducts.map((p, idx) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          className={`feExploreProductCard ${p.isPrimary ? 'feExploreProductCard--primary' : ''}`}
+                          onClick={() => navigate(p.route)}
+                          aria-label={`${p.title} — Explore`}
+                        >
+                          <span className="feExploreProductCard__icon" aria-hidden="true">
+                            <NavIcon name={p.icon} size={22} strokeWidth={2.1} />
+                          </span>
+                          <span className="feExploreProductCard__title">{p.title}</span>
+                          <span className="feExploreProductCard__benefit">{p.benefit}</span>
+                          <span className="feExploreProductCard__cta" aria-hidden="true">
+                            Explore
+                          </span>
+                        </button>
+                      ))}
+                    </div>
 
-          <div className="feCatGrid" role="list" aria-label="Category blocks">
-            <button
-              type="button"
-              className="feCatCard feCatCard--banner"
-              aria-label="Open Investments"
-              onClick={() => navigate('sip_investment')}
-            >
-              <FeCatPhotoBg src={FE_CAT_COVERS.investments} />
-              <div className="feCatCard__body">
-                <div className="feCatCard__top">
-                  <span className="feCatCard__icon" aria-hidden="true">
-                    <NavIcon name="cibil" />
-                  </span>
-                  <span className="feCatCard__title">Investments</span>
-                </div>
-                <div className="feCatCard__items">SIP • FD • Mutual Funds • Bonds</div>
-              </div>
-            </button>
-
-            <button type="button" className="feCatCard feCatCard--banner" aria-label="Open Insurance">
-              <FeCatPhotoBg src={FE_CAT_COVERS.insurance} />
-              <div className="feCatCard__body">
-                <div className="feCatCard__top">
-                  <span className="feCatCard__icon" aria-hidden="true">
-                    <NavIcon name="profile" />
-                  </span>
-                  <span className="feCatCard__title">Insurance</span>
-                </div>
-                <div className="feCatCard__items">Health • Life • Car • Travel</div>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              className="feCatCard feCatCard--banner"
-              aria-label="Open Loans"
-              onClick={() => navigate('loans')}
-            >
-              <FeCatPhotoBg src={FE_CAT_COVERS.loans} />
-              <div className="feCatCard__body">
-                <div className="feCatCard__top">
-                  <span className="feCatCard__icon" aria-hidden="true">
-                    <NavIcon name="home" />
-                  </span>
-                  <span className="feCatCard__title">Loans</span>
-                </div>
-                <div className="feCatCard__items">Personal • Home • Education • EMI</div>
-              </div>
-            </button>
-
-            <button type="button" className="feCatCard feCatCard--banner" aria-label="Open Credit Cards">
-              <FeCatPhotoBg src={FE_CAT_COVERS.creditCards} />
-              <div className="feCatCard__body">
-                <div className="feCatCard__top">
-                  <span className="feCatCard__icon" aria-hidden="true">
-                    <NavIcon name="blogs" />
-                  </span>
-                  <span className="feCatCard__title">Credit Cards</span>
-                </div>
-                <div className="feCatCard__items">Offers • Cashback • Lounge • Fuel</div>
-              </div>
-            </button>
-          </div>
-        </section>
-
-        <CalculatorSection reduceMotion={reduceMotion} />
-
-        <section className="feSection" aria-label="Credit card offers">
-          <div className="feSection__head feSection__head--split">
-            <div>
-              <div className="feSection__title">Premium Cards</div>
-              <div className="feSection__sub">Exclusively curated for you</div>
-            </div>
-            <button
-              type="button"
-              className="feTextBtn"
-              onClick={() => navigate('credit_card_offers')}
-            >
-              Compare All
-            </button>
-          </div>
-
-          <div className="feHScroll" aria-label="Credit card horizontal list">
-            <div className="feCardOffer feCardOffer--premiumStack">
-              <div
-                className="feCCStack"
-                data-reduce-motion={reduceMotion ? 'true' : 'false'}
-              >
-                <div className="feCC feCC--infinite" aria-hidden="true">
-                  <div className="feCC__infiniteHead">
-                    <span className="feCC__infiniteTier">INFINITE</span>
-                    <span className="feCC__infiniteBrand">FinExpert</span>
-                  </div>
-                  <div className="feCC__infiniteFoot">
-                    <span className="feCC__infiniteRupee">₹</span>
-                    <div className="feCC__infiniteFootText">
-                      <span className="feCC__infiniteSub">Total rewards</span>
-                      <span className="feCC__infiniteHint">Tap to unlock</span>
+                    <div className="feExploreSlider__dots" role="tablist" aria-label="Explore slider pagination">
+                      {exploreProducts.map((p, idx) => (
+                        <button
+                          key={`${p.id}-dot`}
+                          type="button"
+                          className={`feExploreSlider__dot ${idx === exploreIdx ? 'is-active' : ''}`}
+                          onClick={() => {
+                            pauseExplore()
+                            scrollExploreToIndex(idx)
+                            scheduleExploreResume()
+                          }}
+                          aria-label={`Go to slide ${idx + 1}`}
+                          aria-selected={idx === exploreIdx}
+                          role="tab"
+                        />
+                      ))}
                     </div>
                   </div>
-                </div>
 
-                <div className="feCC feCC--prime">
-                  <div className="feCC__primeTop">
-                    <span className="feCC__primeWord">Prime Gold</span>
-                    <span className="feCC__mc" aria-hidden="true">
-                      <span className="feCC__mcC feCC__mcC--l" />
-                      <span className="feCC__mcC feCC__mcC--r" />
-                    </span>
-                  </div>
-                  <div className="feCC__primeNumber" aria-hidden="true">
-                    •••• •••• •••• 7850
-                  </div>
-                  <div className="feCC__primeMid">
-                    <div>
-                      <div className="feCC__metaLabel feCC__metaLabel--onGold">Valid thru</div>
-                      <div className="feCC__primeMetaVal">12/29</div>
-                    </div>
-                    <div className="feCC__primeMidRight">
-                      <div className="feCC__metaLabel feCC__metaLabel--onGold">Card holder</div>
-                      <div className="feCC__primeName">
-                        {(profileUser?.name ?? authUser?.name ?? 'USER').trim().toUpperCase()}
-                      </div>
-                    </div>
-                  </div>
                   <button
                     type="button"
-                    className="feCC__applyOnCard"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      navigate('eligibility_form')
-                    }}
+                    className="feQuickBento__guaranteed"
+                    aria-label="Guaranteed saving plan — tax-free maturity benefits"
+                    onClick={() => navigate('savings')}
                   >
-                    Apply now
-                  </button>
-                </div>
-              </div>
-              <div className="feCardOffer__copy">
-                <div className="feCardOffer__title">Instant approval offers</div>
-                <div className="feCardOffer__text">Compare cashback and rewards.</div>
-                <button
-                  type="button"
-                  className="feBtn feBtn--secondary"
-                  onClick={() => navigate('eligibility_form')}
-                >
-                  Check Eligibility
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="feSection" aria-label="Reviews">
-          <div className="feSection__head">
-            <div className="feSection__title">Reviews</div>
-          </div>
-
-          <div
-            className="feCarousel feCarousel--reviews"
-            aria-roledescription="carousel"
-            aria-label="Reviews carousel"
-          >
-            <div className="feAutoRow">
-              <div
-                className="feAutoRow__track"
-                style={{ transform: `translateX(${-reviewIdx * 82}%)` }}
-              >
-                {reviews.map((r) => (
-                  <div key={r.id} className="feReviewCard">
-                    <div
-                      className="feReviewCard__banner"
-                      data-review={r.id}
-                      aria-hidden="true"
-                    >
+                    <div className="feQuickBento__guaranteedLeft">
+                      <span className="feQuickBento__badge">
+                        <span aria-hidden="true">✓</span> Tax free savings
+                      </span>
+                      <span className="feQuickBento__guaranteedTitle">Guaranteed Saving Plan</span>
+                      <span className="feQuickBento__guaranteedDesc">
+                        Secure your family&apos;s future with tax-free maturity benefits
+                      </span>
+                      <span className="feQuickBento__guaranteedCta">Explore Plan</span>
+                    </div>
+                    <div className="feQuickBento__guaranteedGold" aria-hidden="true">
                       <img
-                        className="feReviewCard__bannerImg"
-                        src={r.bannerSrc}
+                        className="feQuickBento__guaranteedPhoto"
+                        src={FE_QUICK_UNSPLASH.guaranteedPlan}
                         alt=""
-                        loading="lazy"
+                        loading="eager"
                         decoding="async"
+                        fetchPriority="high"
                         draggable={false}
-                        style={{ objectPosition: r.bannerPos ?? 'center center' }}
                         onError={(e) => {
                           e.currentTarget.style.display = 'none'
                         }}
                       />
-                      <div className="feReviewCard__bannerScrim" />
-                      <span className="feReviewCard__bannerBrand">FinExpert</span>
+                      <span className="feQuickBento__guaranteedScrim" />
                     </div>
-                    <div className="feReviewCard__body">
-                      <div className="feReviewCard__top">
-                        <div className="feReviewCard__name">{r.name}</div>
-                        <Stars value={r.stars} />
+                  </button>
+
+                </div>
+              </section>
+
+              {/* CIBIL removed from home tab */}
+
+              {/* CalculatorSection removed from home (product-focused home UI) */}
+
+              <section className="feSection" aria-label="Credit card offers">
+                <div className="feSection__head feSection__head--split">
+                  <div>
+                    <div className="feSection__title">Premium Cards</div>
+                    <div className="feSection__sub">Exclusively curated for you</div>
+                  </div>
+                </div>
+
+                <div className="feHScroll" aria-label="Credit card horizontal list">
+                  <div className="feCardOffer feCardOffer--premiumStack">
+                    <div
+                      className="feCCStack"
+                      data-reduce-motion={reduceMotion ? 'true' : 'false'}
+                    >
+                      <div className="feCC feCC--infinite" aria-hidden="true">
+                        <div className="feCC__infiniteHead">
+                          <span className="feCC__infiniteTier">INFINITE</span>
+                          <span className="feCC__infiniteBrand">FinExpert</span>
+                        </div>
+                        <div className="feCC__infiniteFoot">
+                          <span className="feCC__infiniteRupee">₹</span>
+                          <div className="feCC__infiniteFootText">
+                            <span className="feCC__infiniteSub">Total rewards</span>
+                            <span className="feCC__infiniteHint">Tap to unlock</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="feReviewCard__text">{r.text}</div>
+
+                      <div className="feCC feCC--prime">
+                        <div className="feCC__primeTop">
+                          <span className="feCC__primeWord">Prime Gold</span>
+                          <span className="feCC__mc" aria-hidden="true">
+                            <span className="feCC__mcC feCC__mcC--l" />
+                            <span className="feCC__mcC feCC__mcC--r" />
+                          </span>
+                        </div>
+                        <div className="feCC__primeNumber" aria-hidden="true">
+                          •••• •••• •••• 7850
+                        </div>
+                        <div className="feCC__primeMid">
+                          <div>
+                            <div className="feCC__metaLabel feCC__metaLabel--onGold">Valid thru</div>
+                            <div className="feCC__primeMetaVal">12/29</div>
+                          </div>
+                          <div className="feCC__primeMidRight">
+                            <div className="feCC__metaLabel feCC__metaLabel--onGold">Card holder</div>
+                            <div className="feCC__primeName">
+                              {(profileUser?.name ?? authUser?.name ?? 'USER').trim().toUpperCase()}
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className="feCC__applyOnCard"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            navigate('credit_card_eligibility')
+                          }}
+                        >
+                          Apply now
+                        </button>
+                      </div>
+                    </div>
+                    <div className="feCardOffer__copy">
+                      <div className="feCardOffer__title">Compare and Apply</div>
+                      <button
+                        type="button"
+                        className="feBtn feBtn--secondary"
+                        onClick={() => navigate('credit_card_eligibility')}
+                      >
+                        Check Eligibility
+                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-            <div className="feDots feDots--reviews" role="tablist" aria-label="Review slides">
-              {reviews.map((r, idx) => (
-                <button
-                  key={r.id}
-                  type="button"
-                  className={`feDot ${idx === reviewIdx ? 'is-active' : ''}`}
-                  onClick={() => setReviewIdx(idx)}
-                  aria-label={`Go to review ${idx + 1}: ${r.name}`}
-                  aria-selected={idx === reviewIdx}
-                  role="tab"
-                />
-              ))}
-            </div>
-          </div>
-        </section>
+                </div>
+              </section>
 
-        <section className="feSection" aria-label="Blog preview">
-          <div className="feSection__head feSection__head--split">
-            <div className="feSection__title">Blogs</div>
-            <button type="button" className="feTextBtn" onClick={() => navigate('blogs')}>
-              View All Blogs
-            </button>
-          </div>
-
-          <div className="feBlogBannerStack" role="list" aria-label="Blog cards">
-            {[
-              { id: 'cibil', icon: 'cibil' },
-              { id: 'p2', icon: 'emi' },
-              { id: 'p1', icon: 'sip' },
-            ].map((row) => {
-              const post = blogPosts.find((p) => p.id === row.id)
-              if (!post) return null
-              return (
-                <BlogBannerCard
-                  key={row.id}
-                  title={post.title}
-                  subtitle={post.desc}
-                  icon={row.icon}
-                  coverSrc={post.coverSrc}
-                  onClick={() => openBlog(post)}
-                />
-              )
-            })}
-          </div>
-        </section>
-          </>
-        )}
+            </>
+          )}
         </div>
       </main>
 
       {storyOpen
         ? createPortal(
-            <div className="feStoryModal feStoryModal--immersive" role="dialog" aria-label="Story viewer" aria-modal="true">
+          <div className="feStoryModal feStoryModal--immersive" role="dialog" aria-label="Story viewer" aria-modal="true">
+            <button
+              type="button"
+              className="feStoryModal__backdrop"
+              aria-label="Close story"
+              onClick={closeStory}
+            />
+            <div className="feStoryModal__sheet">
+              {storySoundHint && activeStory?.videoUrl && !reduceMotion ? (
+                <button
+                  type="button"
+                  className="feStorySoundHint"
+                  onClick={() => {
+                    setStoryVideoMuted(false)
+                    setStorySoundHint(false)
+                    const v = storyVideoRef.current
+                    if (v) {
+                      v.muted = false
+                      v.play?.().catch(() => { })
+                    }
+                  }}
+                >
+                  Tap for sound
+                </button>
+              ) : null}
+
               <button
                 type="button"
-                className="feStoryModal__backdrop"
-                aria-label="Close story"
-                onClick={closeStory}
+                className="feStoryTap feStoryTap--left"
+                aria-label="Previous story"
+                onClick={goPrevStory}
               />
-              <div className="feStoryModal__sheet">
-                {storySoundHint && activeStory?.videoUrl && !reduceMotion ? (
-                  <button
-                    type="button"
-                    className="feStorySoundHint"
-                    onClick={() => {
-                      setStoryVideoMuted(false)
-                      setStorySoundHint(false)
-                      const v = storyVideoRef.current
-                      if (v) {
-                        v.muted = false
-                        v.play?.().catch(() => {})
-                      }
-                    }}
-                  >
-                    Tap for sound
-                  </button>
-                ) : null}
+              <button
+                type="button"
+                className="feStoryTap feStoryTap--right"
+                aria-label="Next story"
+                onClick={goNextStory}
+              />
 
-                <button
-                  type="button"
-                  className="feStoryTap feStoryTap--left"
-                  aria-label="Previous story"
-                  onClick={goPrevStory}
-                />
-                <button
-                  type="button"
-                  className="feStoryTap feStoryTap--right"
-                  aria-label="Next story"
-                  onClick={goNextStory}
-                />
-
-                <div className="feStoryModal__top">
-                  <div className="feStoryBars" aria-hidden="true">
-                    {activeStatus?.stories?.map((s, idx) => {
-                      const state =
-                        idx < storyIdx ? 'is-done' : idx === storyIdx ? 'is-active' : ''
-                      return (
-                        <div key={s.id} className={`feStoryBar ${state}`}>
-                          <div
-                            className="feStoryBar__fill"
-                            style={{
-                              animationDuration: `${storySlideMs}ms`,
-                              animationPlayState: reduceMotion ? 'paused' : 'running',
-                            }}
-                            key={`${activeStatus?.id}-${storyIdx}-${s.id}-${storySlideMs}`}
-                          />
-                        </div>
-                      )
-                    })}
-                  </div>
-                  <div className="feStoryModal__metaRow">
-                    <div className="feStoryModal__meta">
-                      <StoryAvatarImg
-                        name={activeStatus?.name ?? 'Admin'}
-                        src={activeStatus?.avatarUrl}
-                        className="feStoryModal__avatarImg"
-                        width={72}
-                        height={72}
-                      />
-                      <div>
-                        <div className="feStoryModal__name">{activeStatus?.name}</div>
-                        <div className="feStoryModal__sub">
-                          {activeStory?.time ? `${activeStory.time} • ` : ''}
-                          Stories
-                        </div>
+              <div className="feStoryModal__top">
+                <div className="feStoryBars" aria-hidden="true">
+                  {activeStatus?.stories?.map((s, idx) => {
+                    const state =
+                      idx < storyIdx ? 'is-done' : idx === storyIdx ? 'is-active' : ''
+                    return (
+                      <div key={s.id} className={`feStoryBar ${state}`}>
+                        <div
+                          className="feStoryBar__fill"
+                          style={{
+                            animationDuration: `${storySlideMs}ms`,
+                            animationPlayState: reduceMotion ? 'paused' : 'running',
+                          }}
+                          key={`${activeStatus?.id}-${storyIdx}-${s.id}-${storySlideMs}`}
+                        />
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className="feStoryModal__metaRow">
+                  <div className="feStoryModal__meta">
+                    <StoryAvatarImg
+                      name={activeStatus?.name ?? 'Admin'}
+                      src={activeStatus?.avatarUrl}
+                      className="feStoryModal__avatarImg"
+                      width={72}
+                      height={72}
+                    />
+                    <div>
+                      <div className="feStoryModal__name">{activeStatus?.name}</div>
+                      <div className="feStoryModal__sub">
+                        {activeStory?.time ? `${activeStory.time} • ` : ''}
+                        Stories
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      className="feStoryModal__close"
-                      aria-label="Close"
-                      onClick={closeStory}
-                    >
-                      ✕
-                    </button>
                   </div>
-                </div>
-
-                <div className="feStoryModal__content">
-                  <div
-                    className={`feStorySlide feStorySlide--${activeStory?.theme ?? 'navy'} ${
-                      activeStory?.videoUrl && !reduceMotion ? 'feStorySlide--hasVideo' : ''
-                    } ${reduceMotion ? 'feStorySlide--reduceMotion' : ''}`}
+                  <button
+                    type="button"
+                    className="feStoryModal__close"
+                    aria-label="Close"
+                    onClick={closeStory}
                   >
-                    {activeStory?.videoUrl && !reduceMotion ? (
-                      <>
-                        <div className="feStorySlide__mediaWrap">
-                          <video
-                            ref={storyVideoRef}
-                            key={activeStory.id}
-                            className="feStorySlide__video"
-                            src={activeStory.videoUrl}
-                            playsInline
-                            muted={storyVideoMuted}
-                            autoPlay
-                            onLoadedMetadata={(e) => {
-                              const el = e.target
-                              const ms = Math.min(Math.max(el.duration * 1000, 3500), 15000)
-                              setStorySlideMs(ms)
-                              el.muted = storyVideoMuted
-                            }}
-                            onEnded={goNextStory}
-                          />
-                          <div className="feStorySlide__videoScrim" aria-hidden="true" />
-                        </div>
-                        <button
-                          type="button"
-                          className="feStorySlide__soundBtn"
-                          onClick={() => {
-                            setStorySoundHint(false)
-                            setStoryVideoMuted((m) => !m)
+                    ✕
+                  </button>
+                </div>
+              </div>
+
+              <div className="feStoryModal__content">
+                <div
+                  className={`feStorySlide feStorySlide--${activeStory?.theme ?? 'navy'} ${activeStory?.videoUrl && !reduceMotion ? 'feStorySlide--hasVideo' : ''
+                    } ${reduceMotion ? 'feStorySlide--reduceMotion' : ''}`}
+                >
+                  {activeStory?.videoUrl && !reduceMotion ? (
+                    <>
+                      <div className="feStorySlide__mediaWrap">
+                        <video
+                          ref={storyVideoRef}
+                          key={activeStory.id}
+                          className="feStorySlide__video"
+                          src={activeStory.videoUrl}
+                          playsInline
+                          muted={storyVideoMuted}
+                          autoPlay
+                          onLoadedMetadata={(e) => {
+                            const el = e.target
+                            const ms = Math.min(Math.max(el.duration * 1000, 3500), 15000)
+                            setStorySlideMs(ms)
+                            el.muted = storyVideoMuted
                           }}
-                          aria-label={storyVideoMuted ? 'Unmute video' : 'Mute video'}
-                        >
-                          {storyVideoMuted ? '🔇' : '🔊'}
-                        </button>
-                      </>
-                    ) : (
-                      <div
-                        className={`feStorySlide__media feStorySlide__media--fallback feStorySlide__media--${activeStory?.theme ?? 'navy'}`}
-                        aria-hidden="true"
-                      />
-                    )}
-                    <div className="feStorySlide__body">
-                      <div className="feStorySlide__kicker">{activeStory?.title}</div>
-                      <div className="feStorySlide__title">{activeStory?.subtitle}</div>
-                    </div>
+                          onEnded={goNextStory}
+                        />
+                        <div className="feStorySlide__videoScrim" aria-hidden="true" />
+                      </div>
+                      <button
+                        type="button"
+                        className="feStorySlide__soundBtn"
+                        onClick={() => {
+                          setStorySoundHint(false)
+                          setStoryVideoMuted((m) => !m)
+                        }}
+                        aria-label={storyVideoMuted ? 'Unmute video' : 'Mute video'}
+                      >
+                        {storyVideoMuted ? '🔇' : '🔊'}
+                      </button>
+                    </>
+                  ) : (
+                    <div
+                      className={`feStorySlide__media feStorySlide__media--fallback feStorySlide__media--${activeStory?.theme ?? 'navy'}`}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <div className="feStorySlide__body">
+                    <div className="feStorySlide__kicker">{activeStory?.title}</div>
+                    <div className="feStorySlide__title">{activeStory?.subtitle}</div>
                   </div>
                 </div>
               </div>
-            </div>,
-            document.body,
-          )
+            </div>
+          </div>,
+          document.body,
+        )
         : null}
 
       {logoutOpen ? (
@@ -2374,30 +2779,30 @@ export default function FinExpertMobile() {
         </div>
       ) : null}
 
-      {route !== 'login' && route !== 'signup' && route !== 'forgot_password' && route !== 'otp_login' && route !== 'terms_conditions' && route !== 'privacy_policy' ? (
-      <nav className="feBottomNav" aria-label="Bottom navigation">
-        {TABS.map((t) => {
-          const isActive = t.id === activeTab
-          return (
-            <button
-              key={t.id}
-              type="button"
-              className={`feTab ${isActive ? 'is-active' : ''}`}
-              onClick={() => {
-                setActiveTab(t.id)
-                navigate(t.id)
-              }}
-              data-reduce-motion={reduceMotion ? 'true' : 'false'}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <span className="feTab__icon">
-                <NavIcon name={t.icon} />
-              </span>
-              <span className="feTab__label">{t.label}</span>
-            </button>
-          )
-        })}
-      </nav>
+      {!isAuthFlowRoute ? (
+        <nav className="feBottomNav" aria-label="Bottom navigation">
+          {TABS.map((t) => {
+            const isActive = t.id === activeTab
+            return (
+              <button
+                key={t.id}
+                type="button"
+                className={`feTab ${isActive ? 'is-active' : ''}`}
+                onClick={() => {
+                  setActiveTab(t.id)
+                  navigate(t.id)
+                }}
+                data-reduce-motion={reduceMotion ? 'true' : 'false'}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <span className="feTab__icon">
+                  <NavIcon name={t.icon} size={18} strokeWidth={2.4} />
+                </span>
+                <span className="feTab__label">{t.label}</span>
+              </button>
+            )
+          })}
+        </nav>
       ) : null}
     </div>
   )

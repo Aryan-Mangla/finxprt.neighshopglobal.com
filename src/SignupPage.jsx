@@ -68,9 +68,11 @@ export default function SignupPage({ onSignup, onGotoLogin, onBack, onOpenTerms,
           </button>
         </div>
 
-        <div className="feLoginBrand" aria-hidden="true">
-          <span className="feLoginBrand__logo">FE</span>
-          <span className="feLoginBrand__name">FinExpert</span>
+        <div className="feLoginBrand feLoginBrand--wordmark" aria-hidden="true">
+          <span className="feLoginBrand__name">
+            <span className="feLoginBrand__nameFin">Fin</span>
+            <span className="feLoginBrand__nameExpert">Exprt</span>
+          </span>
         </div>
 
         <div className="feLoginCard__title">Create Account</div>

@@ -1,12 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-  /* New palette — Ink primary, Storm Teal secondary, Papaya surfaces, Tangerine + Brandy accents */
-  --ink: #001524;
-  --storm-teal: #15616d;
-  --papaya-whip: #ffecd1;
-  --tangerine: #ff7d00;
-  --brandy: #78290f;
+  /* Brand palette (user-provided): Primary / Secondary / Tertiary / Neutral */
+  --ink: #114b9d;
+  --storm-teal: #f38222;
+  --primary-700: #0d3f86;
+  --primary-500: #2f67b3;
+  --secondary-500: #f38222;
+  --secondary-400: #f5a255;
+  --secondary-600: #da721a;
+  --tertiary-500: #72360a;
+  --papaya-whip: #f8f9fa;
+  --tangerine: #f38222;
+  --brandy: #72360a;
 
   --primary: var(--ink);
   --secondary: var(--storm-teal);
@@ -14,36 +20,36 @@
   --tertiary: var(--brandy);
 
   /* Legacy names (used across finexpert-mobile + App.css) */
-  --navy: #001524;
-  --orange: #ff7d00;
+  --navy: #114b9d;
+  --orange: #f38222;
 
-  --primary-rgb: 0, 21, 36;
-  --secondary-rgb: 21, 97, 109;
-  --accent-rgb: 255, 125, 0;
-  --brandy-rgb: 120, 41, 15;
-  --papaya-rgb: 255, 236, 209;
+  --primary-rgb: 17, 75, 157;
+  --secondary-rgb: 243, 130, 34;
+  --accent-rgb: 243, 130, 34;
+  --brandy-rgb: 114, 54, 10;
+  --papaya-rgb: 248, 249, 250;
 
-  --bg: #faf6ef;
+  --bg: #f8f9fa;
   --bg-soft: var(--papaya-whip);
 
   /* Semantic */
-  --success: #2d6a4f;
-  --error: #c23b3b;
-  --warning: #d4a017;
+  --success: #2f67b3;
+  --error: #72360a;
+  --warning: #f38222;
   --info: var(--storm-teal);
 
   /* Surfaces */
-  --card: #fffefb;
-  --border: rgba(0, 21, 36, 0.12);
-  --textH: #001524;
-  --text: rgba(0, 21, 36, 0.84);
-  --textMuted: rgba(0, 21, 36, 0.55);
+  --card: #ffffff;
+  --border: rgba(17, 75, 157, 0.14);
+  --textH: #114b9d;
+  --text: rgba(17, 75, 157, 0.84);
+  --textMuted: rgba(17, 75, 157, 0.56);
 
   /* Shadows (ink-tinted) */
-  --shadow-sm: 0 8px 22px rgba(0, 21, 36, 0.07);
-  --shadow-md: 0 14px 34px rgba(0, 21, 36, 0.1);
-  --shadow-lg: 0 24px 54px rgba(0, 21, 36, 0.14);
-  --shadow-soft: 0 16px 40px rgba(0, 21, 36, 0.08);
+  --shadow-sm: 0 8px 22px rgba(17, 75, 157, 0.08);
+  --shadow-md: 0 14px 34px rgba(17, 75, 157, 0.12);
+  --shadow-lg: 0 24px 54px rgba(17, 75, 157, 0.16);
+  --shadow-soft: 0 16px 40px rgba(17, 75, 157, 0.09);
 
   /* Glass */
   --glass-bg: rgba(255, 255, 255, 0.78);
@@ -76,7 +82,7 @@
   font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.6;
-  color: var(--textH);
+  color: #0d2342;
   background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -86,24 +92,20 @@
 
 * {
   box-sizing: border-box;
+  -ms-overflow-style: none; /* IE/Edge legacy */
+  scrollbar-width: none; /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none; /* Chrome, Safari, Opera */
 }
 
 body {
   margin: 0;
-  background: radial-gradient(
-      1200px 600px at 25% -10%,
-      rgba(var(--primary-rgb), 0.06),
-      rgba(var(--primary-rgb), 0) 60%
-    ),
-    radial-gradient(
-      900px 500px at 85% 0%,
-      rgba(var(--secondary-rgb), 0.14),
-      rgba(var(--secondary-rgb), 0) 55%
-    ),
-    radial-gradient(800px 400px at 50% 100%, rgba(var(--accent-rgb), 0.05), transparent 55%),
-    radial-gradient(600px 400px at 0% 80%, rgba(var(--brandy-rgb), 0.06), transparent 50%),
-    var(--bg);
-  color: var(--textH);
+  background: var(--bg);
+  color: #0d2342;
 }
 
 #root {
@@ -118,7 +120,7 @@ body {
 h1,
 h2,
 h3 {
-  color: var(--textH);
+  color: #0d2342;
   letter-spacing: -0.6px;
 }
 
@@ -231,7 +233,7 @@ select:focus-visible {
   border-radius: var(--radius-btn);
   border: 1px solid rgba(var(--primary-rgb), 0.18);
   background: rgba(255, 255, 255, 0.96);
-  color: var(--textH);
+  color: #0d2342;
   box-shadow: 0 10px 20px rgba(var(--primary-rgb), 0.04);
   transition: box-shadow var(--dur-2) var(--ease-out),
     border-color var(--dur-2) ease,

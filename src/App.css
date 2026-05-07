@@ -640,7 +640,7 @@
   margin: 0;
   font-size: 28px;
   letter-spacing: -0.5px;
-  color: var(--textH);
+  color: #0d2342;
 }
 
 .sectionHead__subtitle {
@@ -720,7 +720,7 @@
   margin: 14px 0 8px;
   font-size: 16px;
   letter-spacing: -0.2px;
-  color: var(--textH);
+  color: #0d2342;
 }
 
 .featureCard__text {
@@ -757,7 +757,7 @@
 .midCta__title {
   font-weight: 1000;
   letter-spacing: -0.3px;
-  color: var(--textH);
+  color: #0d2342;
 }
 
 .midCta__text {
@@ -878,7 +878,7 @@
   margin: 0;
   font-size: 28px;
   letter-spacing: -0.5px;
-  color: var(--textH);
+  color: #0d2342;
 }
 
 .how__text {
@@ -917,7 +917,7 @@
 
 .howBullet__title {
   font-weight: 900;
-  color: var(--textH);
+  color: #0d2342;
   letter-spacing: -0.2px;
 }
 
@@ -1027,7 +1027,7 @@
   margin-top: 12px;
   font-weight: 900;
   letter-spacing: -0.2px;
-  color: var(--textH);
+  color: #0d2342;
 }
 
 .categoryTile__meta {
@@ -1255,7 +1255,7 @@
 .article__title {
   font-weight: 900;
   letter-spacing: -0.2px;
-  color: var(--textH);
+  color: #0d2342;
   line-height: 1.25;
 }
 
@@ -1276,7 +1276,7 @@
 .calcCard__title {
   font-weight: 900;
   letter-spacing: -0.2px;
-  color: var(--textH);
+  color: #0d2342;
 }
 
 .discoverCard,

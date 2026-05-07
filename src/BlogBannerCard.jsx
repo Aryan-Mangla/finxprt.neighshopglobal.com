@@ -122,6 +122,7 @@ export function blogIconFromCategory(cat) {
       return 'shield'
     case 'Credit Cards':
       return 'card'
+    case 'India':
     case 'Economy':
       return 'economy'
     default:

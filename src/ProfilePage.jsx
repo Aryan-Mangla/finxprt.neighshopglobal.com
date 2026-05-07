@@ -1,12 +1,19 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n))
-}
+import { useEffect, useMemo, useState } from 'react'
 
 function formatINR(value) {
   const rounded = Math.round(value)
   return `₹${rounded.toLocaleString('en-IN')}`
+}
+
+function formatPhoneDisplay(raw) {
+  const d = String(raw ?? '').replace(/\D/g, '')
+  if (d.length === 10) return `+91 ${d.slice(0, 5)} ${d.slice(5)}`
+  if (raw && String(raw).trim()) return String(raw).trim()
+  return ''
+}
+
+function avatarUrlForName(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&size=256&background=002366&color=ffffff&bold=true`
 }
 
 function Icon({ name }) {
@@ -14,8 +21,8 @@ function Icon({ name }) {
     xmlns: 'http://www.w3.org/2000/svg',
     viewBox: '0 0 24 24',
     fill: 'none',
-    width: 18,
-    height: 18,
+    width: 20,
+    height: 20,
     stroke: 'currentColor',
     strokeWidth: 2,
     strokeLinecap: 'round',
@@ -24,13 +31,6 @@ function Icon({ name }) {
   }
 
   switch (name) {
-    case 'edit':
-      return (
-        <svg {...common}>
-          <path d="M12 20h9" />
-          <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-        </svg>
-      )
     case 'back':
       return (
         <svg {...common} width={20} height={20}>
@@ -43,443 +43,207 @@ function Icon({ name }) {
           <path d="M9 18l6-6-6-6" />
         </svg>
       )
-    case 'bell':
+    case 'investments':
       return (
         <svg {...common}>
-          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7" />
-          <path d="M9.7 18a2.3 2.3 0 0 0 4.6 0" />
+          <path d="M3 3v18h18" />
+          <path d="M7 16l4-4 4 4 5-5" />
         </svg>
       )
-    case 'id':
+    case 'loan':
       return (
         <svg {...common}>
-          <rect x="3" y="5" width="18" height="14" rx="2" />
-          <path d="M7 9h6" />
-          <path d="M7 13h8" />
-          <path d="M17 12h.01" />
+          <rect x="2" y="6" width="20" height="12" rx="2" />
+          <path d="M6 10h.01M10 10h4" />
         </svg>
       )
-    case 'link':
+    case 'emi':
       return (
         <svg {...common}>
-          <path d="M10 13a5 5 0 0 0 7.1 0l1.9-1.9a5 5 0 0 0-7.1-7.1L11 3.9" />
-          <path d="M14 11a5 5 0 0 0-7.1 0L5 12.9A5 5 0 1 0 12.1 20L13 19.1" />
+          <path d="M4 7h16" />
+          <path d="M4 12h16" />
+          <path d="M4 17h10" />
+          <circle cx="18" cy="17" r="2" />
         </svg>
       )
-    case 'globe':
+    case 'calculator':
       return (
         <svg {...common}>
-          <circle cx="12" cy="12" r="9" />
-          <path d="M3 12h18" />
-          <path d="M12 3a14 14 0 0 1 0 18" />
-          <path d="M12 3a14 14 0 0 0 0 18" />
+          <rect x="4" y="3" width="16" height="18" rx="2" />
+          <path d="M8 7h8M8 11h2M12 11h2M16 11h2M8 15h2M12 15h2M16 15h2" />
         </svg>
       )
-    case 'help':
+    case 'document':
       return (
         <svg {...common}>
-          <circle cx="12" cy="12" r="9" />
-          <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2-3 4" />
-          <path d="M12 17h.01" />
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <path d="M14 2v6h6" />
+          <path d="M9 13h6M9 17h6" />
+        </svg>
+      )
+    case 'settings':
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
         </svg>
       )
     case 'logout':
       return (
         <svg {...common}>
-          <path d="M10 17l-1 1a2 2 0 0 1-2 0l-1-1a2 2 0 0 1 0-2V7a2 2 0 0 1 0-2l1-1a2 2 0 0 1 2 0l1 1" />
-          <path d="M15 12H8" />
-          <path d="M15 12l-2-2" />
-          <path d="M15 12l-2 2" />
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <path d="M16 17l5-5-5-5M21 12H9" />
         </svg>
       )
     default:
       return (
         <svg {...common}>
-          <path d="M12 6v12" />
-          <path d="M6 12h12" />
+          <circle cx="12" cy="12" r="9" />
         </svg>
       )
   }
 }
 
-function useAnimatedNumber(target, { durationMs = 420, reduceMotion = false } = {}) {
-  const [v, setV] = useState(target)
-  const fromRef = useRef(target)
-  const rafRef = useRef(0)
-
-  useEffect(() => {
-    if (reduceMotion) {
-      setV(target)
-      fromRef.current = target
-      return
-    }
-    const from = fromRef.current
-    const start = performance.now()
-    const tick = (now) => {
-      const t = Math.min(1, (now - start) / durationMs)
-      const eased = 1 - Math.pow(1 - t, 3)
-      setV(from + (target - from) * eased)
-      if (t < 1) rafRef.current = requestAnimationFrame(tick)
-      else fromRef.current = target
-    }
-    cancelAnimationFrame(rafRef.current)
-    rafRef.current = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafRef.current)
-  }, [durationMs, reduceMotion, target])
-
-  return Math.round(v)
-}
+const MENU_ITEMS = [
+  { id: 'investments', label: 'My Investments', sub: 'SIP, funds & more', icon: 'investments', route: 'sip_investment' },
+  { id: 'loans', label: 'Loan History', sub: 'Applications & status', icon: 'loan', route: 'loans' },
+  { id: 'emi', label: 'EMI Details', sub: 'Track repayments', icon: 'emi', route: 'emi_calculator' },
+  { id: 'saved', label: 'Saved Calculations', sub: 'EMI, SIP & tools', icon: 'calculator', route: 'calculator' },
+  { id: 'docs', label: 'Documents', sub: 'KYC & uploads', icon: 'document', route: 'application_form' },
+  { id: 'settings', label: 'Settings', sub: 'Language & preferences', icon: 'settings', route: 'language' },
+]
 
 export default function ProfilePage({
-  reduceMotion = false,
   user: userProp,
-  languageLabel = 'English',
   onBack,
   onNavigate,
   onEditProfile,
-  onOpenNotifications,
-  onOpenSupport,
   onRequestLogout,
 }) {
   const user = useMemo(
     () => ({
       name: userProp?.name ?? 'Prashant Kumar',
       email: userProp?.email ?? 'prashant@finexpert.app',
+      phone: userProp?.phone ?? '',
     }),
-    [userProp?.name, userProp?.email],
+    [userProp?.name, userProp?.email, userProp?.phone],
   )
 
-  // CIBIL highlight
-  const [score, setScore] = useState(785)
-  const [scoreDelta, setScoreDelta] = useState(12)
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [toast, setToast] = useState('')
-  const scoreMeta = useMemo(() => {
-    const min = 300
-    const max = 900
-    const pct = clamp((score - min) / (max - min), 0, 1)
-    const color =
-      score < 600 ? 'var(--error)' : score < 750 ? 'var(--orange)' : 'var(--success)'
-    return { pct, color }
-  }, [score])
-
-  const displayScore = useAnimatedNumber(score, { durationMs: 520, reduceMotion })
-
-  const [animateGauge, setAnimateGauge] = useState(false)
-  const [gaugeKey, setGaugeKey] = useState(0)
-  useEffect(() => {
-    if (reduceMotion) {
-      setAnimateGauge(true)
-      return
-    }
-    const t = setTimeout(() => setAnimateGauge(true), 80)
-    return () => clearTimeout(t)
-  }, [reduceMotion])
+  const [avatarSrc, setAvatarSrc] = useState(() => avatarUrlForName(user.name))
 
   useEffect(() => {
-    if (!toast) return
-    const t = setTimeout(() => setToast(''), 2200)
-    return () => clearTimeout(t)
-  }, [toast])
+    setAvatarSrc(avatarUrlForName(user.name))
+  }, [user.name])
 
-  const refreshScore = async () => {
-    if (isRefreshing) return
-    setIsRefreshing(true)
-    setToast('')
-    await new Promise((r) => setTimeout(r, 2400))
+  const phoneLine = formatPhoneDisplay(user.phone)
+  const creditScore = 785
 
-    const nextDelta = Math.max(1, Math.round(4 + Math.random() * 7))
-    setScore((s) => Math.min(900, s + nextDelta))
-    setScoreDelta(nextDelta)
-
-    setGaugeKey((k) => k + 1)
-
-    setToast('Score Updated Successfully')
-    setIsRefreshing(false)
-  }
-
-  const [kycVerified] = useState(true)
-
-  const summary = useMemo(
+  const stats = useMemo(
     () => [
-      { key: 'Active Loans', value: formatINR(420000), status: 'On Track', tone: 'good' },
-      { key: 'Insurance Policies', value: '3', status: 'Covered', tone: 'good' },
-      { key: 'Portfolio Value', value: formatINR(1350000), status: '+8.4%', tone: 'medium' },
+      { key: 'investment', label: 'Total Investment', value: formatINR(1350000), hint: 'Portfolio' },
+      { key: 'plans', label: 'Active Plans', value: '4', hint: 'Insurance & FD' },
+      { key: 'score', label: 'Credit Score', value: String(creditScore), hint: 'CIBIL' },
     ],
     [],
   )
 
   return (
-    <div className="feProfilePage" aria-label="Profile">
+    <div className="feProfilePage feProfilePage--modern" aria-label="Profile">
       <div className="feScreenTop feProfilePage__top">
         <button type="button" className="feBackBtn" onClick={() => onBack?.()} aria-label="Back to home">
           <Icon name="back" />
         </button>
         <div className="feScreenTop__texts">
           <div className="feScreenTop__title">Profile</div>
-          <div className="feScreenTop__sub">Account & credit overview</div>
+          <div className="feScreenTop__sub">Your account at a glance</div>
         </div>
       </div>
 
-      <section className="feProfileHeader" aria-label="User header">
-        <div className="feProfileHeader__card">
-          <button
-            type="button"
-            className="feProfileHeader__edit"
-            aria-label="Edit profile"
-            onClick={() => onEditProfile?.()}
-          >
-            <Icon name="edit" />
-          </button>
-          <div className="feProfileHeader__row">
-            <div className="feProfileHeader__avatar" aria-hidden="true" />
-            <div className="feProfileHeader__meta">
-              <div className="feProfileHeader__name">{user.name}</div>
-              <div className="feProfileHeader__email">{user.email}</div>
-            </div>
-          </div>
+      <section className="feProfileHero" aria-label="Profile header">
+        <div className="feProfileHero__avatarWrap">
+          <img
+            className="feProfileHero__avatar"
+            src={avatarSrc}
+            alt=""
+            width={80}
+            height={80}
+            draggable={false}
+            decoding="async"
+            onError={() => setAvatarSrc(avatarUrlForName(user.name))}
+          />
         </div>
+        <h1 className="feProfileHero__name">{user.name}</h1>
+        <p className="feProfileHero__meta">
+          <span className="feProfileHero__email">{user.email}</span>
+          {phoneLine ? (
+            <>
+              <span className="feProfileHero__dot" aria-hidden="true">
+                ·
+              </span>
+              <span className="feProfileHero__phone">{phoneLine}</span>
+            </>
+          ) : null}
+        </p>
+        <button type="button" className="feBtn feBtn--secondary feProfileHero__edit" onClick={() => onEditProfile?.()}>
+          Edit profile
+        </button>
       </section>
 
-      <section className="feSection" aria-label="CIBIL highlight">
-        <div className="feProfileCibil">
-          <div className="feProfileCibil__left">
-            <div className="feSection__title">CIBIL Score</div>
-            <div className="feProfileCibil__delta">▲ +{scoreDelta} points this month</div>
+      <section className="feProfileStats" aria-label="Your stats">
+        {stats.map((s) =>
+          s.key === 'score' ? (
             <button
+              key={s.key}
               type="button"
-              className="feBtn feBtn--secondary"
-              onClick={refreshScore}
-              disabled={isRefreshing}
+              className="feProfileStat feProfileStat--btn"
+              onClick={() => onNavigate?.('cibil')}
             >
-              {isRefreshing ? (
-                <span className="feBtn__loading" aria-label="Refreshing">
-                  <span className="feSpinner" aria-hidden="true" />
-                  Refreshing…
-                </span>
-              ) : (
-                'Refresh Score'
-              )}
+              <span className="feProfileStat__label">{s.label}</span>
+              <span className="feProfileStat__value feProfileStat__value--score">{s.value}</span>
+              <span className="feProfileStat__hint">{s.hint} · Tap to view</span>
             </button>
-          </div>
-
-          <div
-            key={gaugeKey}
-            className={`feGauge feGauge--sm ${animateGauge ? 'is-animate' : ''}`}
-            style={{ '--p': scoreMeta.pct, '--ring': scoreMeta.color }}
-            aria-label="CIBIL gauge"
-          >
-            <svg className="feGauge__svg" viewBox="0 0 120 120" aria-hidden="true">
-              <circle className="feGauge__track" cx="60" cy="60" r="46" />
-              <circle className="feGauge__progress" cx="60" cy="60" r="46" pathLength="100" />
-            </svg>
-            <div className="feGauge__center">
-              <div className="feGauge__score feGauge__score--sm">{displayScore}</div>
-              <div className="feGauge__meta">/ 900</div>
+          ) : (
+            <div key={s.key} className="feProfileStat">
+              <span className="feProfileStat__label">{s.label}</span>
+              <span className="feProfileStat__value">{s.value}</span>
+              <span className="feProfileStat__hint">{s.hint}</span>
             </div>
-          </div>
-        </div>
+          ),
+        )}
       </section>
 
-      <section className="feSection" aria-label="Credit benefits">
-        <div className="feSection__head">
-          <div className="feSection__title">Credit Benefits</div>
-        </div>
-        <div className="feBenefitGrid" role="list">
-          <button
-            type="button"
-            className="feBenefitCard feBenefitCard--btn"
-            role="listitem"
-            onClick={() => onNavigate?.('personal_loan_explorer')}
-          >
-            <div className="feBenefitCard__icon" aria-hidden="true">
-              %
-            </div>
-            <div className="feBenefitCard__title">Better Loan Rates</div>
-            <div className="feBenefitCard__text">Higher score = lower interest rates</div>
-          </button>
-          <button
-            type="button"
-            className="feBenefitCard feBenefitCard--btn"
-            role="listitem"
-            onClick={() => onNavigate?.('cibil')}
-          >
-            <div className="feBenefitCard__icon" aria-hidden="true">
-              ⌁
-            </div>
-            <div className="feBenefitCard__title">Financial Health Tracking</div>
-            <div className="feBenefitCard__text">Track your financial health easily</div>
-          </button>
-          <button
-            type="button"
-            className="feBenefitCard feBenefitCard--btn"
-            role="listitem"
-            onClick={() => onOpenNotifications?.()}
-          >
-            <div className="feBenefitCard__icon" aria-hidden="true">
-              ⛨
-            </div>
-            <div className="feBenefitCard__title">Fraud Protection</div>
-            <div className="feBenefitCard__text">Get alerts for suspicious activity</div>
-          </button>
-        </div>
-      </section>
-
-      <section className="feSection" aria-label="Personal finance summary">
-        <div className="feSection__head">
-          <div className="feSection__title">Personal Finance Summary</div>
-        </div>
-        <div className="feSummaryCard" role="table" aria-label="Finance summary table">
-          {summary.map((row) => (
-            <div key={row.key} className="feSummaryRow" role="row">
-              <div className="feSummaryRow__k" role="cell">
-                {row.key}
-              </div>
-              <div className="feSummaryRow__v" role="cell">
-                {row.value}
-              </div>
-              <div className={`feStatus feStatus--${row.tone}`} role="cell">
-                {row.status}
-              </div>
-            </div>
+      <section className="feProfileMenu" aria-label="Menu">
+        <div className="feProfileMenu__card">
+          {MENU_ITEMS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className="feProfileMenu__row"
+              onClick={() => onNavigate?.(item.route)}
+            >
+              <span className="feProfileMenu__icon" aria-hidden="true">
+                <Icon name={item.icon} />
+              </span>
+              <span className="feProfileMenu__texts">
+                <span className="feProfileMenu__title">{item.label}</span>
+                <span className="feProfileMenu__sub">{item.sub}</span>
+              </span>
+              <span className="feProfileMenu__chevron" aria-hidden="true">
+                <Icon name="chevron" />
+              </span>
+            </button>
           ))}
         </div>
       </section>
 
-      <section className="feSection" aria-label="Settings and preferences">
-        <div className="feSection__head">
-          <div className="feSection__title">Settings & Preferences</div>
-        </div>
-
-        <div className="feSettingsCard" role="list">
-          <button
-            type="button"
-            className="feSettingRow feSettingRow--btn"
-            role="listitem"
-            onClick={() => onOpenNotifications?.()}
-          >
-            <div className="feSettingRow__left">
-              <span className="feSettingRow__icon" aria-hidden="true">
-                <Icon name="bell" />
-              </span>
-              <div className="feSettingRow__texts">
-                <div className="feSettingRow__title">Notifications</div>
-                <div className="feSettingRow__sub">Offers, alerts & updates</div>
-              </div>
-            </div>
-            <span className="feSettingRow__right" aria-hidden="true">
-              <Icon name="chevron" />
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="feSettingRow feSettingRow--btn"
-            role="listitem"
-            onClick={() => onNavigate?.('linked_accounts')}
-          >
-            <div className="feSettingRow__left">
-              <span className="feSettingRow__icon" aria-hidden="true">
-                <Icon name="id" />
-              </span>
-              <div className="feSettingRow__texts">
-                <div className="feSettingRow__title">KYC Status</div>
-                <div className="feSettingRow__sub">{kycVerified ? 'Verified' : 'Pending'}</div>
-              </div>
-            </div>
-            <span className={`feStatus feStatus--${kycVerified ? 'good' : 'medium'}`}>
-              {kycVerified ? 'Verified' : 'Pending'}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="feSettingRow feSettingRow--btn"
-            role="listitem"
-            onClick={() => onNavigate?.('linked_accounts')}
-          >
-            <div className="feSettingRow__left">
-              <span className="feSettingRow__icon" aria-hidden="true">
-                <Icon name="link" />
-              </span>
-              <div className="feSettingRow__texts">
-                <div className="feSettingRow__title">Linked Accounts</div>
-                <div className="feSettingRow__sub">Banks &amp; cards</div>
-              </div>
-            </div>
-            <span className="feSettingRow__right" aria-hidden="true">
-              <Icon name="chevron" />
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="feSettingRow feSettingRow--btn"
-            role="listitem"
-            onClick={() => onNavigate?.('language')}
-          >
-            <div className="feSettingRow__left">
-              <span className="feSettingRow__icon" aria-hidden="true">
-                <Icon name="globe" />
-              </span>
-              <div className="feSettingRow__texts">
-                <div className="feSettingRow__title">Language</div>
-                <div className="feSettingRow__sub">{languageLabel}</div>
-              </div>
-            </div>
-            <span className="feSettingRow__right" aria-hidden="true">
-              <Icon name="chevron" />
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="feSettingRow feSettingRow--btn"
-            role="listitem"
-            onClick={() => onOpenSupport?.()}
-          >
-            <div className="feSettingRow__left">
-              <span className="feSettingRow__icon" aria-hidden="true">
-                <Icon name="help" />
-              </span>
-              <div className="feSettingRow__texts">
-                <div className="feSettingRow__title">Help &amp; Support</div>
-                <div className="feSettingRow__sub">FAQs &amp; contact</div>
-              </div>
-            </div>
-            <span className="feSettingRow__right" aria-hidden="true">
-              <Icon name="chevron" />
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="feSettingRow feSettingRow--btn feSettingRow--danger"
-            role="listitem"
-            onClick={() => onRequestLogout?.()}
-          >
-            <div className="feSettingRow__left">
-              <span className="feSettingRow__icon" aria-hidden="true">
-                <Icon name="logout" />
-              </span>
-              <div className="feSettingRow__texts">
-                <div className="feSettingRow__title">Logout</div>
-                <div className="feSettingRow__sub">Sign out of your account</div>
-              </div>
-            </div>
-            <span className="feSettingRow__right" aria-hidden="true">
-              <Icon name="chevron" />
-            </span>
-          </button>
-        </div>
-      </section>
-
-      {toast ? (
-        <div className="feToast" role="status" aria-live="polite">
-          {toast}
-        </div>
-      ) : null}
+      <div className="feProfileLogoutWrap">
+        <button type="button" className="feProfileLogout" onClick={() => onRequestLogout?.()}>
+          <span className="feProfileLogout__icon" aria-hidden="true">
+            <Icon name="logout" />
+          </span>
+          Logout
+        </button>
+      </div>
     </div>
   )
 }
-

@@ -1,213 +1,215 @@
-import { useMemo, useState } from 'react'
+import { useRef, useState } from 'react'
 
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n))
+function clamp(n, lo, hi) {
+  return Math.min(Math.max(n, lo), hi)
 }
 
-function formatINR(value) {
-  const rounded = Math.round(value)
-  return `₹${rounded.toLocaleString('en-IN')}`
-}
+const STEP_UP_PCT = 10
 
-function makePath(points) {
-  if (points.length === 0) return ''
-  const [first, ...rest] = points
-  return `M ${first.x} ${first.y} ` + rest.map((p) => `L ${p.x} ${p.y}`).join(' ')
-}
-
-export default function SipInvestmentPage() {
-  const [monthly, setMonthly] = useState(20000)
+export default function SipInvestmentPage({ onInvestNow }) {
+  const [frequency, setFrequency] = useState('monthly')
+  const [amount, setAmount] = useState(5000)
   const [rate, setRate] = useState(12)
   const [years, setYears] = useState(10)
+  const [stepUp, setStepUp] = useState(false)
 
-  const sip = useMemo(() => {
-    const P = Math.max(0, monthly)
-    const n = Math.max(1, Math.round(years * 12))
-    const r = Math.max(0, rate) / 100
-    const i = r / 12
+  const ctaRef = useRef(null)
 
-    const invested = P * n
-    const total = i === 0 ? invested : P * (((Math.pow(1 + i, n) - 1) / i) * (1 + i))
-    const returns = Math.max(0, total - invested)
+  const reset = () => {
+    setFrequency('monthly')
+    setAmount(5000)
+    setRate(12)
+    setYears(10)
+    setStepUp(false)
+  }
 
-    return { invested, total, returns }
-  }, [monthly, rate, years])
+  const onCalculate = () => {
+    ctaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }
 
-  const series = useMemo(() => {
-    // yearly points for a simple growth line chart
-    const width = 320
-    const height = 140
-    const pad = 18
-    const pts = []
-    const r = Math.max(0, rate) / 100
-    const i = r / 12
+  const goStarted = () => {
+    if (onInvestNow) onInvestNow()
+    else if (typeof window !== 'undefined') window.location.hash = '#/application_form'
+  }
 
-    const yearsCount = Math.max(1, Math.round(years))
-    for (let y = 0; y <= yearsCount; y++) {
-      const n = Math.max(1, y * 12)
-      const P = Math.max(0, monthly)
-      const total = i === 0 ? P * n : P * (((Math.pow(1 + i, n) - 1) / i) * (1 + i))
-      pts.push({ year: y, value: total })
-    }
-
-    const maxV = Math.max(...pts.map((p) => p.value), 1)
-    const minV = 0
-
-    const toX = (idx) => pad + (idx / Math.max(1, pts.length - 1)) * (width - pad * 2)
-    const toY = (v) =>
-      pad + (1 - (v - minV) / (maxV - minV)) * (height - pad * 2)
-
-    const points = pts.map((p, idx) => ({ x: toX(idx), y: toY(p.value) }))
-    const path = makePath(points)
-
-    return { width, height, pad, points, path, maxV }
-  }, [monthly, rate, years])
+  const investLabel = frequency === 'monthly' ? 'Investment amount (₹)' : 'Yearly investment (₹)'
+  const investHint = frequency === 'monthly' ? 'Per month' : 'Once every year'
+  const amountMin = frequency === 'monthly' ? 100 : 500
+  const amountMax = frequency === 'monthly' ? 1000000 : 5000000
+  const amountStep = frequency === 'monthly' ? 100 : 500
 
   return (
-    <div className="feSipInv" aria-label="SIP Investment">
-      <div className="feCalcCard" aria-label="SIP investment calculator">
-        <div className="feCalcCard__head">
-          <div>
-            <div className="feCalcCard__title">SIP Investment</div>
-            <div className="feCalcCard__sub">Visualize long-term growth in seconds</div>
-          </div>
-          <span className="fePill fePill--green">{rate}% p.a.</span>
-        </div>
+    <div className="feLumpLux feSipLux" lang="en" aria-label="SIP Calculator">
+      <header className="feLumpLux__pageHead feSipLux__pageHead">
+        <h1 className="feLumpLux__title feSipLux__mainTitle">SIP Calculator</h1>
+        <p className="feSipLux__subtitle">Plan your wealth with precision</p>
+      </header>
 
-        <div className="feSipGraph" aria-label="Growth graph">
-          <div className="feSipGraph__top">
-            <div className="feSipGraph__k">Projected value</div>
-            <div className="feSipGraph__v">{formatINR(sip.total)}</div>
-          </div>
-          <svg
-            className="feSipGraph__svg"
-            viewBox={`0 0 ${series.width} ${series.height}`}
-            role="img"
-            aria-label="SIP growth line chart"
-          >
-            <defs>
-              <linearGradient id="sipLine" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="rgba(0, 21, 36, 0.95)" />
-                <stop offset="60%" stopColor="rgba(255, 125, 0, 0.92)" />
-                <stop offset="100%" stopColor="rgba(21, 97, 109, 0.95)" />
-              </linearGradient>
-              <linearGradient id="sipFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgba(255, 125, 0, 0.2)" />
-                <stop offset="100%" stopColor="rgba(255, 125, 0, 0)" />
-              </linearGradient>
-            </defs>
-
-            <path
-              d={`M ${series.pad} ${series.height - series.pad} L ${series.pad} ${series.pad}`}
-              stroke="rgba(148, 163, 184, 0.35)"
-              strokeWidth="1"
-              fill="none"
-            />
-            <path
-              d={`M ${series.pad} ${series.height - series.pad} L ${series.width - series.pad} ${
-                series.height - series.pad
-              }`}
-              stroke="rgba(148, 163, 184, 0.35)"
-              strokeWidth="1"
-              fill="none"
-            />
-
-            <path
-              d={`${series.path} L ${series.width - series.pad} ${series.height - series.pad} L ${series.pad} ${
-                series.height - series.pad
-              } Z`}
-              fill="url(#sipFill)"
-            />
-            <path
-              d={series.path}
-              fill="none"
-              stroke="url(#sipLine)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {series.points.slice(-1).map((p, idx) => (
-              <circle key={idx} cx={p.x} cy={p.y} r="4.5" fill="rgba(22, 163, 74, 0.95)" />
-            ))}
-          </svg>
-        </div>
-
-        <div className="feCalcInputs">
-          <label className="feCalcInput">
-            <div className="feCalcInput__top">
-              <span>Monthly amount</span>
-              <strong>{formatINR(monthly)}</strong>
+      <section className="feLumpLux__mainCard" aria-label="Calculator inputs">
+        <div className="feLumpLux__topGrid">
+          <div className="feLumpLux__inputsCol">
+            <div className="feSipLux__freq">
+              <span className="feLumpLux__fieldLabel" id="sip-freq-label">
+                Frequency
+              </span>
+              <div className="feSipLux__freqSeg" role="group" aria-labelledby="sip-freq-label">
+                <button
+                  type="button"
+                  className={`feSipLux__freqBtn${frequency === 'monthly' ? ' is-active' : ''}`}
+                  aria-pressed={frequency === 'monthly'}
+                  onClick={() => setFrequency('monthly')}
+                >
+                  Monthly
+                </button>
+                <button
+                  type="button"
+                  className={`feSipLux__freqBtn${frequency === 'yearly' ? ' is-active' : ''}`}
+                  aria-pressed={frequency === 'yearly'}
+                  onClick={() => setFrequency('yearly')}
+                >
+                  Yearly
+                </button>
+              </div>
             </div>
-            <input
-              className="feRange"
-              type="range"
-              min="500"
-              max="100000"
-              step="500"
-              value={monthly}
-              onChange={(e) => setMonthly(Number(e.target.value))}
-            />
-          </label>
 
-          <label className="feCalcInput">
-            <div className="feCalcInput__top">
-              <span>Return rate</span>
-              <strong>{rate}%</strong>
+            <label className="feLumpLux__field">
+              <span className="feLumpLux__fieldLabel">{investLabel}</span>
+              <div className="feLumpLux__inputWrap feLumpLux__inputWrap--prefix">
+                <span className="feLumpLux__prefix">₹</span>
+                <input
+                  className="feLumpLux__input"
+                  type="number"
+                  inputMode="numeric"
+                  min={amountMin}
+                  max={amountMax}
+                  step={amountStep}
+                  value={amount}
+                  onChange={(e) => {
+                    const raw = e.target.value === '' ? 0 : Number(e.target.value)
+                    if (!Number.isFinite(raw)) return
+                    // Keep typing smooth; enforce min/max on blur.
+                    setAmount(Math.max(0, Math.round(raw)))
+                  }}
+                  onBlur={() => setAmount(clamp(Math.round(amount), amountMin, amountMax))}
+                  aria-describedby="sip-amt-hint"
+                />
+              </div>
+              <span id="sip-amt-hint" className="feSipLux__fieldHint">
+                {investHint}
+              </span>
+            </label>
+
+            <label className="feLumpLux__field">
+              <span className="feLumpLux__fieldLabel">Expected returns (% p.a.)</span>
+              <div className="feLumpLux__inputWrap">
+                <input
+                  className="feLumpLux__input"
+                  type="number"
+                  inputMode="decimal"
+                  min={1}
+                  max={30}
+                  step={0.1}
+                  value={rate}
+                  onChange={(e) => {
+                    const raw = e.target.value === '' ? 0 : Number(e.target.value)
+                    if (!Number.isFinite(raw)) return
+                    setRate(Math.round(clamp(raw, 1, 30) * 10) / 10)
+                  }}
+                />
+                <span className="feLumpLux__suffix">%</span>
+              </div>
+            </label>
+
+            <label className="feLumpLux__field">
+              <span className="feLumpLux__fieldLabel">Tenure (years)</span>
+              <div className="feLumpLux__inputWrap">
+                <input
+                  className="feLumpLux__input"
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  max={30}
+                  step={1}
+                  value={years}
+                  onChange={(e) => {
+                    const raw = e.target.value === '' ? 1 : Number(e.target.value)
+                    if (!Number.isFinite(raw)) return
+                    setYears(clamp(Math.round(raw), 1, 30))
+                  }}
+                />
+                <span className="feLumpLux__suffix feLumpLux__suffix--text">Yrs</span>
+              </div>
+            </label>
+          </div>
+
+          <div className="feLumpLux__compoundCol feSipLux__stepCard">
+            <div className="feSipLux__stepRow">
+              <div className="feSipLux__stepTitles">
+                <span className="feSipLux__stepName">Annual step-up</span>
+                <span className="feSipLux__stepCaps">Increase investment yearly</span>
+              </div>
+              <button
+                type="button"
+                className={`feLumpLux__switch${stepUp ? ' is-on' : ''}`}
+                aria-pressed={stepUp}
+                onClick={() => setStepUp((s) => !s)}
+                aria-label={stepUp ? 'Turn off annual step-up' : 'Turn on annual step-up'}
+              >
+                <span className="feLumpLux__switchKnob" />
+              </button>
             </div>
-            <input
-              className="feRange"
-              type="range"
-              min="0"
-              max="20"
-              step="0.5"
-              value={rate}
-              onChange={(e) => setRate(Number(e.target.value))}
-            />
-          </label>
-
-          <label className="feCalcInput">
-            <div className="feCalcInput__top">
-              <span>Time</span>
-              <strong>{years} years</strong>
+            <p className="feLumpLux__compoundHint">
+              {stepUp
+                ? `Investment rises ${STEP_UP_PCT}% every year on the SIP anniversary.`
+                : 'Keep the same instalment each year.'}
+            </p>
+            <div className="feSipLux__sideActions">
+              <div className="feLumpLux__actions feSipLux__actions">
+                <button type="button" className="feLumpLux__btnReset" onClick={reset}>
+                  <span className="feLumpLux__btnResetIcon" aria-hidden="true">
+                    ↻
+                  </span>
+                  Reset
+                </button>
+                <button type="button" className="feLumpLux__btnCalc" onClick={onCalculate}>
+                  <span className="feLumpLux__btnCalcIcon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="6" y="3" width="12" height="18" rx="2" />
+                      <path d="M9 7h6M9 11h.01M12 11h.01M15 11h.01M9 15h.01M12 15h.01M15 15h.01" />
+                    </svg>
+                  </span>
+                  Calculate
+                </button>
+              </div>
             </div>
-            <input
-              className="feRange"
-              type="range"
-              min="1"
-              max="30"
-              step="1"
-              value={years}
-              onChange={(e) => setYears(Number(e.target.value))}
-            />
-          </label>
-        </div>
-
-        <div className="feCalcResults" aria-label="SIP Results">
-          <div className="feResult">
-            <div className="feResult__label">Invested</div>
-            <div className="feResult__value">{formatINR(sip.invested)}</div>
-          </div>
-          <div className="feResult">
-            <div className="feResult__label">Returns</div>
-            <div className="feResult__value">{formatINR(sip.returns)}</div>
-          </div>
-          <div className="feResult feResult--highlight">
-            <div className="feResult__label">Total value</div>
-            <div className="feResult__value feResult__value--green">{formatINR(sip.total)}</div>
           </div>
         </div>
+      </section>
 
-        <button
-          type="button"
-          className="feBtn feBtn--primary feBtn--full"
-          onClick={() => {
-            if (typeof window !== 'undefined') window.location.hash = '#/application_form'
-          }}
-        >
-          Start SIP
-        </button>
-      </div>
+      <footer ref={ctaRef} className="feLumpLux__ctaBanner">
+        <div className="feLumpLux__ctaInner">
+          <div className="feLumpLux__ctaCopy">
+            <p className="feLumpLux__ctaEyebrow">
+              <span className="feLumpLux__ctaDot" /> Expert guidance
+            </p>
+            <h3 className="feLumpLux__ctaHeading">
+              Start your SIP journey with <em>NISM-certified expert</em>
+            </h3>
+            <p className="feLumpLux__ctaText">
+              Get personalized investment strategies and professional advice to achieve your financial goals faster.
+            </p>
+          </div>
+          <button type="button" className="feLumpLux__ctaBtn feSipLux__ctaBtn" onClick={goStarted}>
+            Get started now{' '}
+            <span className="feSipLux__ctaTrend" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <path d="M4 16l6-6 4 4 6-8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M14 6h6v6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </footer>
     </div>
   )
 }
-

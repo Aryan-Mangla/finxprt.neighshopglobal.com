@@ -12,10 +12,12 @@ export default function InsuranceExplorerPage({ typeId = 'health' }) {
   const title = useMemo(() => {
     const map = {
       health: 'Health Insurance Plans',
+      term: 'Term Insurance Plans',
       life: 'Life Insurance Plans',
       car: 'Car Insurance Plans',
       bike: 'Bike Insurance Plans',
       travel: 'Travel Insurance Plans',
+      commercial: 'Commercial Vehicle Insurance Plans',
     }
     return map[typeId] ?? 'Insurance Plans'
   }, [typeId])
