@@ -44,6 +44,7 @@ import VerifyDetailsPage from './VerifyDetailsPage.jsx'
 import TermsConditionsPage from './TermsConditionsPage.jsx'
 import PrivacyPolicyPage from './PrivacyPolicyPage.jsx'
 import TaxationScreen from './TaxationScreen.jsx'
+import PremiumCardCarousel from './PremiumCardCarousel.jsx'
 
 const FE_QUICK_UNSPLASH = {
   mutualFunds:
@@ -569,6 +570,16 @@ export default function FinExpertMobile() {
   const headerHiddenRef = useRef(false)
   const headerToggleAnchorRef = useRef(0)
   const mainRef = useRef(null)
+  const [appContext, setAppContext] = useState({ 
+    title: 'Application Form', 
+    subtitle: 'Fill in the details below to proceed',
+    skipOtp: false
+  })
+
+  const openApplication = (title, subtitle, skipOtp = false) => {
+    setAppContext({ title, subtitle, skipOtp })
+    navigate('application_form')
+  }
 
 
 
@@ -1396,6 +1407,15 @@ export default function FinExpertMobile() {
     // Fetch news for both: full News page + the News preview section on Home.
     const shouldFetch = route === 'blogs' || route === 'home'
     if (!shouldFetch) return
+    const isLocalDev =
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    // Avoid noisy third-party RSS failures during localhost development.
+    if (isLocalDev) {
+      setBlogPosts(staticNewsPosts)
+      setNewsLoading(false)
+      return
+    }
 
     let cancelled = false
 
@@ -2151,7 +2171,7 @@ export default function FinExpertMobile() {
             </ScreenShell>
           ) : route === 'sip_investment' ? (
             <ScreenShell title="SIP Calculator" subtitle="Plan your wealth with precision" onBack={goBack}>
-              <SipInvestmentPage onInvestNow={() => navigate('application_form')} />
+              <SipInvestmentPage onInvestNow={() => openApplication('Apply for Mutual Funds', 'NISM-certified expert guidance')} />
             </ScreenShell>
           ) : route === 'cibil' ? (
             <ScreenShell
@@ -2221,7 +2241,10 @@ export default function FinExpertMobile() {
               <SupportPage />
             </ScreenShell>
           ) : route === 'mutual_funds' ? (
-            <MutualFundsPage onNavigate={(to) => navigate(to)} />
+            <MutualFundsPage 
+              onNavigate={(to) => navigate(to)} 
+              onApply={(title, sub) => openApplication(title, sub)} 
+            />
           ) : route === 'mutual_funds_detail' ? (
             <ScreenShell title="Fund Details" subtitle="Returns, risk and highlights" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
               <MutualFundDetailPage fundId={mfSelectedId} />
@@ -2237,6 +2260,7 @@ export default function FinExpertMobile() {
                   setInsSelectedId(id)
                   navigate('insurance_explorer')
                 }}
+                onBookMeeting={() => openApplication('Consult with Insurance Expert', 'IRDA certified advisory')}
               />
             </ScreenShell>
           ) : route === 'insurance_detail' ? (
@@ -2248,20 +2272,23 @@ export default function FinExpertMobile() {
             </ScreenShell>
           ) : route === 'insurance_explorer' ? (
             <ScreenShell title="" subtitle="" onBack={goBack} showBand={false} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
-              <InsuranceExplorerPage typeId={insSelectedId} />
+              <InsuranceExplorerPage 
+                typeId={insSelectedId} 
+                onApply={(title, sub) => openApplication(title, sub)} 
+              />
             </ScreenShell>
           ) : route === 'bonds' ? (
             <ScreenShell title="Bonds" subtitle="Safer fixed-income options" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
-              <BondsPage />
+              <BondsPage onApply={(title, sub) => openApplication(title, sub, true)} />
             </ScreenShell>
           ) : route === 'savings' ? (
             <ScreenShell title="Savings" subtitle="Plans to grow steadily" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
-              <SavingsPlansPage />
+              <SavingsPlansPage onApply={(title, sub) => openApplication(title, sub)} />
             </ScreenShell>
           ) : route === 'taxation' ? (
             <TaxationScreen onBack={goBack} />
           ) : route === 'loans' ? (
-            <LoansPage />
+            <LoansPage onApply={(title, sub) => openApplication(title, sub)} />
           ) : route === 'personal_loan_explorer' || route === 'business_loan_explorer' ? (
             <ScreenShell
               title={route === 'business_loan_explorer' ? 'Business Loan' : 'Personal Loan'}
@@ -2269,19 +2296,27 @@ export default function FinExpertMobile() {
               onBack={goBack}
               showBand={false}
             >
-              <PersonalLoanExplorerPage mode={route === 'business_loan_explorer' ? 'business' : 'personal'} />
+              <PersonalLoanExplorerPage 
+                mode={route === 'business_loan_explorer' ? 'business' : 'personal'} 
+                onApply={(title, sub) => openApplication(title, sub)}
+                onCheckEligibility={() => navigate('eligibility_form')}
+              />
             </ScreenShell>
           ) : route === 'credit_card_eligibility' ? (
-            <ScreenShell title="Credit Cards" subtitle="Exclusive offers for you" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
-              <CreditCardEligibilityPage />
+            <ScreenShell title="Credit Cards" subtitle="Apply for a credit card" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
+              <CreditCardEligibilityPage onApply={(title, sub) => openApplication(title, sub)} />
             </ScreenShell>
           ) : route === 'eligibility_form' ? (
             <ScreenShell title="Eligibility" subtitle="Quick eligibility check" onBack={goBack} showBand={false} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
-              <EligibilityFormPage />
+              <EligibilityFormPage onApply={(title, sub) => openApplication(title, sub)} />
             </ScreenShell>
           ) : route === 'application_form' ? (
             <ScreenShell title="Apply" subtitle="Application form" onBack={goBack} showBand={false} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
-              <ApplicationFormPage />
+              <ApplicationFormPage 
+                title={appContext.title || undefined} 
+                subtitle={appContext.subtitle || undefined} 
+                skipOtp={appContext.skipOtp}
+              />
             </ScreenShell>
           ) : route === 'notifications' ? (
             <ScreenShell title="Notifications" subtitle="Offers, alerts & updates" onBack={goBack} onNotifications={() => navigate('notifications')} onProfile={() => navigate('profile')}>
@@ -2292,7 +2327,7 @@ export default function FinExpertMobile() {
               <AccountPage
                 onOpenProfile={() => navigate('profile')}
                 onOpenCibil={() => navigate('cibil')}
-                onOpenApplication={() => navigate('application_form')}
+                onOpenApplication={() => openApplication('Application Form', 'Complete your secure onboarding')}
               />
             </ScreenShell>
           ) : route === 'credit_cards' ? (
@@ -2304,6 +2339,7 @@ export default function FinExpertMobile() {
                   setCcSelectedId(id)
                   navigate('credit_cards')
                 }}
+                onApply={(title, sub) => openApplication(title, sub)}
               />
             </ScreenShell>
           ) : route !== 'home' ? (
@@ -2528,84 +2564,14 @@ export default function FinExpertMobile() {
 
               {/* CIBIL removed from home tab */}
 
-              {/* CalculatorSection removed from home (product-focused home UI) */}
-
-              <section className="feSection" aria-label="Credit card offers">
-                <div className="feSection__head feSection__head--split">
-                  <div>
-                    <div className="feSection__title">Premium Cards</div>
-                    <div className="feSection__sub">Exclusively curated for you</div>
-                  </div>
-                </div>
-
-                <div className="feHScroll" aria-label="Credit card horizontal list">
-                  <div className="feCardOffer feCardOffer--premiumStack">
-                    <div
-                      className="feCCStack"
-                      data-reduce-motion={reduceMotion ? 'true' : 'false'}
-                    >
-                      <div className="feCC feCC--infinite" aria-hidden="true">
-                        <div className="feCC__infiniteHead">
-                          <span className="feCC__infiniteTier">INFINITE</span>
-                          <span className="feCC__infiniteBrand">FinExpert</span>
-                        </div>
-                        <div className="feCC__infiniteFoot">
-                          <span className="feCC__infiniteRupee">₹</span>
-                          <div className="feCC__infiniteFootText">
-                            <span className="feCC__infiniteSub">Total rewards</span>
-                            <span className="feCC__infiniteHint">Tap to unlock</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="feCC feCC--prime">
-                        <div className="feCC__primeTop">
-                          <span className="feCC__primeWord">Prime Gold</span>
-                          <span className="feCC__mc" aria-hidden="true">
-                            <span className="feCC__mcC feCC__mcC--l" />
-                            <span className="feCC__mcC feCC__mcC--r" />
-                          </span>
-                        </div>
-                        <div className="feCC__primeNumber" aria-hidden="true">
-                          •••• •••• •••• 7850
-                        </div>
-                        <div className="feCC__primeMid">
-                          <div>
-                            <div className="feCC__metaLabel feCC__metaLabel--onGold">Valid thru</div>
-                            <div className="feCC__primeMetaVal">12/29</div>
-                          </div>
-                          <div className="feCC__primeMidRight">
-                            <div className="feCC__metaLabel feCC__metaLabel--onGold">Card holder</div>
-                            <div className="feCC__primeName">
-                              {(profileUser?.name ?? authUser?.name ?? 'USER').trim().toUpperCase()}
-                            </div>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          className="feCC__applyOnCard"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            navigate('credit_card_eligibility')
-                          }}
-                        >
-                          Apply now
-                        </button>
-                      </div>
-                    </div>
-                    <div className="feCardOffer__copy">
-                      <div className="feCardOffer__title">Compare and Apply</div>
-                      <button
-                        type="button"
-                        className="feBtn feBtn--secondary"
-                        onClick={() => navigate('credit_card_eligibility')}
-                      >
-                        Check Eligibility
-                      </button>
-                    </div>
-                  </div>
-                </div>
+              <section className="feSection feSection--premiumCarousel" aria-label="Credit card offers">
+                <PremiumCardCarousel 
+                  onCheckEligibility={() => navigate('credit_card_eligibility')} 
+                  onApply={(title, sub) => openApplication(title, sub)}
+                />
               </section>
+
+              {/* CalculatorSection removed from home (product-focused home UI) */}
 
             </>
           )}

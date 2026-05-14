@@ -101,9 +101,26 @@ function ShieldVerified() {
   )
 }
 
-export default function PersonalLoanExplorerPage({ mode = 'personal' }) {
+export default function PersonalLoanExplorerPage({ mode = 'personal', onApply, onCheckEligibility }) {
   const isBiz = mode === 'business'
   const scope = isBiz ? 'business' : 'personal'
+  const productTitle = isBiz ? 'Business Loan' : 'Personal Loan'
+
+  const handleApply = (title, subtitle) => {
+    if (onApply) {
+      onApply(title || `Apply for ${productTitle}`, subtitle || (isBiz ? 'Working capital & growth finance' : 'Instant fintech & verified bank partners'))
+    } else {
+      go('application_form')
+    }
+  }
+
+  const handleCheckEligibility = () => {
+    if (onCheckEligibility) {
+      onCheckEligibility()
+    } else {
+      go('eligibility_form')
+    }
+  }
 
   return (
     <div className="feLoanMkt" data-scope={scope} aria-label={isBiz ? 'Business loan marketplace' : 'Personal loan marketplace'}>
@@ -119,7 +136,7 @@ export default function PersonalLoanExplorerPage({ mode = 'personal' }) {
             Credit Line
           </h2>
           <p className="feLoanMkt__heroSub">Get up to ₹5,00,000 instantly with minimal documentation.</p>
-          <button type="button" className="feLoanMkt__heroCta" onClick={() => go('eligibility_form')}>
+          <button type="button" className="feLoanMkt__heroCta" onClick={() => handleApply(`Apply for ${productTitle}`, 'Zero collateral credit line')}>
             Get Started
           </button>
         </div>
@@ -131,7 +148,7 @@ export default function PersonalLoanExplorerPage({ mode = 'personal' }) {
             <h3 className="feLoanMkt__h">Instant Lenders</h3>
             <p className="feLoanMkt__sub">Fintech partners for quick digital credit</p>
           </div>
-          <button type="button" className="feLoanMkt__viewAll" onClick={() => go('application_form')}>
+          <button type="button" className="feLoanMkt__viewAll" onClick={() => handleApply(`Apply for ${productTitle}`, 'View all verified partners')}>
             View all
           </button>
         </div>
@@ -140,7 +157,7 @@ export default function PersonalLoanExplorerPage({ mode = 'personal' }) {
             <div key={x.id} className="feLoanMkt__tile">
               <FintechIcon logo={x.logo} />
               <div className="feLoanMkt__tileName">{x.name}</div>
-              <button type="button" className={`feLoanMkt__applyPill feLoanMkt__applyPill--${x.apply}`} onClick={() => go('application_form')}>
+              <button type="button" className={`feLoanMkt__applyPill feLoanMkt__applyPill--${x.apply}`} onClick={() => handleApply(`Apply for ${x.name}`, `Verified ${productTitle} Partner`)}>
                 Apply
               </button>
             </div>
@@ -171,7 +188,7 @@ export default function PersonalLoanExplorerPage({ mode = 'personal' }) {
               <div className="feLoanMkt__bankRight">
                 <div className="feLoanMkt__bankTag">{b.tag}</div>
                 <div className="feLoanMkt__bankValue">{b.value}</div>
-                <button type="button" className="feLoanMkt__bankCta" onClick={() => go('eligibility_form')}>
+                <button type="button" className="feLoanMkt__bankCta" onClick={handleCheckEligibility}>
                   Check eligibility <span aria-hidden="true">›</span>
                 </button>
               </div>
@@ -194,7 +211,7 @@ export default function PersonalLoanExplorerPage({ mode = 'personal' }) {
             <CheckMini /> Instant results
           </li>
         </ul>
-        <button type="button" className="feLoanMkt__calcBtn" onClick={() => go('eligibility_form')}>
+        <button type="button" className="feLoanMkt__calcBtn" onClick={handleCheckEligibility}>
           Calculate Now
         </button>
       </section>

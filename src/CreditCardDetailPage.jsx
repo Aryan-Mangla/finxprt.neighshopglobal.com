@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import CreditCardPromoHero from './CreditCardPromoHero.jsx'
 
 const CARD_OFFERS = [
   {
@@ -41,11 +42,8 @@ export default function CreditCardDetailPage() {
 
   return (
     <section className="feCCHub" aria-label="Credit card offers">
-      <article className="feCCHubHero">
-        <div className="feCCHubHero__title">5% Cashback on All Spends</div>
-        <div className="feCCHubHero__sub">
-          Experience the smooth rewards ecosystem and premium lifestyle perks.
-        </div>
+      <article className="feCCHubHero feCCHubHero--slider" aria-label="Featured credit card offers">
+        <CreditCardPromoHero density="compact" />
       </article>
 
       <div className="feCCHubFilter">

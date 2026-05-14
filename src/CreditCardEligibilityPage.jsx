@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import CreditCardPromoHero from './CreditCardPromoHero.jsx'
 
 const BANK_FILTERS = [
   { id: 'all', label: 'All Banks' },
@@ -154,7 +155,7 @@ function PlasticCard({ offer }) {
   )
 }
 
-function ProductBlock({ offer }) {
+function ProductBlock({ offer, onApply }) {
   return (
     <section className="feCCElig__product" aria-label={offer.title}>
       <div className="feCCElig__productSheet">
@@ -172,7 +173,17 @@ function ProductBlock({ offer }) {
           ))}
         </ul>
         <div className="feCCElig__actions">
-          <button type="button" className="feCCElig__btn feCCElig__btn--primary" onClick={() => goHash('application_form')}>
+          <button 
+            type="button" 
+            className="feCCElig__btn feCCElig__btn--primary" 
+            onClick={() => {
+              if (onApply) {
+                onApply('Apply for Credit Card', 'Instant approval with partner banks.')
+              } else {
+                goHash('application_form')
+              }
+            }}
+          >
             Apply now
           </button>
           <button type="button" className="feCCElig__btn feCCElig__btn--ghost" onClick={() => goHash('credit_card_offers')}>
@@ -185,7 +196,7 @@ function ProductBlock({ offer }) {
   )
 }
 
-export default function CreditCardEligibilityPage() {
+export default function CreditCardEligibilityPage({ onApply }) {
   const [bank, setBank] = useState('all')
 
   const filteredCards = bank === 'all' 
@@ -195,15 +206,8 @@ export default function CreditCardEligibilityPage() {
   return (
     <div className="feCCElig" lang="en" aria-label="Credit card eligibility">
       {/* —— Block 1: hero + bank filters (reference layout 1) —— */}
-      <section className="feCCElig__hero" aria-label="Promotional banner">
-        <div className="feCCElig__heroFigure" aria-hidden="true" />
-        <div className="feCCElig__heroGlow" aria-hidden="true" />
-        <div className="feCCElig__heroInner">
-          <h1 className="feCCElig__heroTitle">5% Cashback on All Spends</h1>
-          <p className="feCCElig__heroSub">
-            Experience the Zen of seamless payments with ZenithPay&apos;s Infinite ecosystem.
-          </p>
-        </div>
+      <section className="feCCElig__hero">
+        <CreditCardPromoHero onAction={() => {}} />
       </section>
 
       <section className="feCCElig__filters" aria-label="Filter by bank">
@@ -230,7 +234,7 @@ export default function CreditCardEligibilityPage() {
       {/* —— Dynamic Card List —— */}
       <div className="feCCElig__list">
         {filteredCards.map(card => (
-          <ProductBlock key={card.id} offer={card} />
+          <ProductBlock key={card.id} offer={card} onApply={onApply} />
         ))}
         {filteredCards.length === 0 && (
           <div className="feCCElig__empty">No cards found for this bank.</div>

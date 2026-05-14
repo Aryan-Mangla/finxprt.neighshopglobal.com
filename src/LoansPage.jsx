@@ -729,7 +729,7 @@ function renderCatTitle(title, { stack = true } = {}) {
   return title
 }
 
-export default function LoansPage() {
+export default function LoansPage({ onApply }) {
   const reduceMotion = useMemo(() => {
     if (typeof window === 'undefined') return false
     return window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false
@@ -789,7 +789,7 @@ export default function LoansPage() {
         title: 'GOLD',
         subtitle: null,
         icon: 'gold',
-        route: 'application_form',
+        onApply: () => onApply?.('Apply for Gold Loan', 'Lowest interest rates on gold assets'),
       },
       {
         id: 'edu',
@@ -845,7 +845,15 @@ export default function LoansPage() {
 
     if (isRow) {
       return (
-        <button type="button" className={cls} onClick={() => navigateHash(card.route)} aria-label={card.title}>
+        <button 
+          type="button" 
+          className={cls} 
+          onClick={() => {
+            if (card.onApply) card.onApply()
+            else if (card.route) navigateHash(card.route)
+          }} 
+          aria-label={card.title}
+        >
           <span className="feLoanStoreCatCard__iconWrap" aria-hidden="true">
             <LoanStoreCategoryIcon name={card.icon} />
           </span>
@@ -858,7 +866,15 @@ export default function LoansPage() {
     }
 
     return (
-      <button type="button" className={cls} onClick={() => navigateHash(card.route)} aria-label={card.title}>
+      <button 
+        type="button" 
+        className={cls} 
+        onClick={() => {
+          if (card.onApply) card.onApply()
+          else if (card.route) navigateHash(card.route)
+        }} 
+        aria-label={card.title}
+      >
         {card.kicker ? <div className="feLoanStoreCatCard__kicker">{card.kicker}</div> : null}
         <span className="feLoanStoreCatCard__iconWrap" aria-hidden="true">
           <LoanStoreCategoryIcon name={card.icon} />
@@ -873,28 +889,6 @@ export default function LoansPage() {
     <div className="feLoans feLoanStore" aria-label="LoanStore">
       <LoanTopBannerCarousel />
 
-      <section className="feLoanStorePartners" aria-label="Our trusted partners">
-        <div className="feLoanStoreSectionHead feLoanStoreSectionHead--split">
-          <div className="feLoanStoreSectionHead__title">Our Trusted Partners</div>
-        </div>
-
-        <div className="feLoanStoreMarquee" aria-label="Partner logos marquee">
-          <div className="feLoanStoreMarquee__track" data-reduce-motion={reduceMotion ? 'true' : 'false'}>
-            {[...partners, ...partners].map((p, idx) => (
-              <div
-                key={`${p.id}-${idx}`}
-                className="feLoanStorePartnerTile"
-                role="listitem"
-                aria-label="Partner"
-              >
-                <span className="feLoanStorePartnerTile__icon" aria-hidden="true">
-                  <LoanStoreIcon name={p.icon} />
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <section className="feLoanStoreCategories" aria-label="Popular loan categories">
         <div className="feLoanStoreSectionHead">

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-export default function CreditCardOffersPage({ onSelectCard }) {
+export default function CreditCardOffersPage({ onSelectCard, onApply }) {
   const offers = useMemo(
     () => [
       { id: 'cc1', name: 'FinExpert Platinum', meta: '5% cashback • Lounge', perks: 'Rewards + Travel perks' },
@@ -42,13 +42,13 @@ export default function CreditCardOffersPage({ onSelectCard }) {
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
-                  if (typeof window !== 'undefined') window.location.hash = '#/application_form'
+                  if (onApply) onApply(`Apply for ${o.name}`, 'Enjoy premium benefits and cashback')
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
                     e.stopPropagation()
-                    if (typeof window !== 'undefined') window.location.hash = '#/application_form'
+                    if (onApply) onApply(`Apply for ${o.name}`, 'Enjoy premium benefits and cashback')
                   }
                 }}
               >

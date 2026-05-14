@@ -1,0 +1,503 @@
+/* CibilScorePanel.css */
+
+:root {
+  --cibil-orange: #F15A24;
+  --cibil-blue: #2B2B68;
+  --cibil-blue-light: #3D3D8A;
+  --cibil-gray-50: #f9fafb;
+  --cibil-gray-100: #f3f4f6;
+  --cibil-gray-400: #9ca3af;
+  --cibil-gray-500: #6b7280;
+}
+
+.cibil-panel {
+  font-family: 'Inter', sans-serif;
+  background: white;
+  min-height: 100%;
+  color: var(--cibil-blue);
+  overflow-y: auto;
+  padding-bottom: 40px;
+}
+
+.cibil-hero {
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.cibil-badge-zap {
+  background: rgba(241, 90, 36, 0.1);
+  color: var(--cibil-orange);
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cibil-h1 {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+
+.cibil-orange-text {
+  color: var(--cibil-orange);
+}
+
+/* Gauge Styles */
+.cibil-gauge-container {
+  position: relative;
+  width: 192px;
+  height: 96px;
+  margin: 40px auto 32px;
+  overflow: hidden;
+}
+
+.cibil-gauge-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px 999px 0 0;
+  border: 8px solid var(--cibil-gray-100);
+}
+
+.cibil-gauge-progress {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px 999px 0 0;
+  border: 8px solid var(--cibil-orange);
+  clip-path: inset(0 0 50% 0);
+  transform-origin: center bottom;
+}
+
+.cibil-gauge-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.cibil-gauge-label {
+  font-size: 12px;
+  color: var(--cibil-gray-400);
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cibil-gauge-score {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--cibil-blue);
+  line-height: 1;
+}
+
+.cibil-gauge-status {
+  font-size: 10px;
+  color: #22c55e;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.cibil-desc {
+  color: var(--cibil-gray-500);
+  font-size: 14px;
+  padding: 0 16px;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+/* Pricing Card */
+.cibil-pricing-card {
+  background: var(--cibil-blue);
+  border-radius: 40px;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(43, 43, 104, 0.2);
+  color: white;
+  margin-bottom: 48px;
+}
+
+.cibil-pricing-card::before {
+  content: '';
+  position: absolute;
+  top: -64px;
+  right: -64px;
+  width: 128px;
+  height: 128px;
+  background: rgba(241, 90, 36, 0.2);
+  border-radius: 50%;
+  filter: blur(48px);
+}
+
+.cibil-promo-badge {
+  background: var(--cibil-orange);
+  padding: 4px 16px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 24px;
+  display: inline-block;
+}
+
+.cibil-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.cibil-price-main {
+  font-size: 48px;
+  font-weight: 900;
+}
+
+.cibil-price-strike {
+  text-decoration: line-through;
+  opacity: 0.4;
+  font-size: 14px;
+}
+
+.cibil-price-off {
+  color: var(--cibil-orange);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.cibil-price-sub {
+  opacity: 0.5;
+  font-size: 10px;
+  margin-bottom: 32px;
+}
+
+.cibil-btn-main {
+  width: 100%;
+  background: var(--cibil-orange);
+  color: white;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.2s;
+  box-shadow: 0 10px 20px rgba(241, 90, 36, 0.3);
+}
+
+.cibil-btn-main:active {
+  transform: scale(0.98);
+}
+
+/* Stats Grid */
+.cibil-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 0 24px;
+  margin-bottom: 48px;
+}
+
+.cibil-stat-card {
+  background: white;
+  border: 1px solid var(--cibil-gray-100);
+  padding: 16px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+}
+
+.cibil-stat-value {
+  color: var(--cibil-orange);
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+.cibil-stat-label {
+  font-size: 8px;
+  color: rgba(43, 43, 104, 0.5);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+}
+
+/* Features List */
+.cibil-features {
+  padding: 0 24px;
+  margin-bottom: 64px;
+}
+
+.cibil-feature-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid var(--cibil-gray-100);
+  margin-bottom: 16px;
+}
+
+.cibil-feature-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(241, 90, 36, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cibil-orange);
+  flex-shrink: 0;
+}
+
+.cibil-feature-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.cibil-feature-desc {
+  font-size: 12px;
+  color: var(--cibil-gray-500);
+  line-height: 1.4;
+}
+
+/* Repair Section */
+.cibil-repair-section {
+  padding: 0 24px;
+  margin-bottom: 64px;
+}
+
+.cibil-repair-card {
+  background: white;
+  border-radius: 40px;
+  padding: 32px;
+  border: 1px solid var(--cibil-gray-100);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.cibil-repair-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.cibil-repair-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cibil-repair-icon {
+  background: var(--cibil-blue);
+  color: white;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.cibil-repair-tag {
+  background: #f0fdf4;
+  color: #16a34a;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  border: 1px solid #dcfce7;
+}
+
+.cibil-repair-desc {
+  font-size: 12px;
+  color: var(--cibil-gray-500);
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.cibil-issue-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.cibil-issue-item {
+  background: var(--cibil-gray-50);
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: bold;
+  color: rgba(43, 43, 104, 0.7);
+}
+
+.cibil-repair-note {
+  background: rgba(43, 43, 104, 0.05);
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+
+.cibil-btn-blue {
+  width: 100%;
+  background: var(--cibil-blue);
+  color: white;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Modal Styles */
+.cibil-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.cibil-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(43, 43, 104, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.cibil-modal-sheet {
+  position: relative;
+  background: white;
+  width: 100%;
+  max-width: 448px;
+  border-radius: 40px 40px 0 0;
+  padding: 32px;
+  box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.cibil-modal-title {
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 24px;
+}
+
+.cibil-input-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.cibil-input-icon {
+  position: absolute;
+  left: 16px;
+  top: 14px;
+  color: var(--cibil-gray-400);
+}
+
+.cibil-input {
+  width: 100%;
+  background: var(--cibil-gray-50);
+  border: 1px solid var(--cibil-gray-100);
+  padding: 14px 16px 14px 44px;
+  border-radius: 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.cibil-input:focus {
+  border-color: var(--cibil-orange);
+}
+
+.cibil-success-card {
+  background: rgba(43, 43, 104, 0.05);
+  padding: 24px;
+  border-radius: 32px;
+  margin-bottom: 32px;
+}
+
+.cibil-success-hero {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--cibil-orange);
+}
+
+.cibil-faq-section {
+  padding: 0 24px;
+  margin-bottom: 64px;
+}
+
+.cibil-faq-item {
+  background: var(--cibil-gray-50);
+  border-radius: 16px;
+  border: 1px solid var(--cibil-gray-100);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.cibil-faq-summary {
+  padding: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: bold;
+  list-style: none;
+}
+
+.cibil-faq-answer {
+  padding: 0 16px 16px;
+  font-size: 10px;
+  color: var(--cibil-gray-500);
+  line-height: 1.6;
+}
+
+.cibil-trust-card {
+  background: var(--cibil-blue);
+  margin: 0 24px;
+  border-radius: 24px;
+  padding: 24px;
+  color: white;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.cibil-footer-seals {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  opacity: 0.5;
+}
+
+@media (min-width: 640px) {
+  .cibil-modal-overlay {
+    align-items: center;
+    padding: 24px;
+  }
+  .cibil-modal-sheet {
+    border-radius: 40px;
+  }
+}

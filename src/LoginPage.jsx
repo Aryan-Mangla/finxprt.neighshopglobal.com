@@ -1,28 +1,32 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState, useEffect } from 'react'
 
 const SWIPE_THRESHOLD = 55
 
 const ONBOARDING_SLIDES = [
   {
     id: 'welcome',
+    image: '/onboarding_hero.png',
     title: 'Welcome to FinXpert',
     description:
       'Your all-in-one financial partner. Manage loans, insurance, investments and more in one place.',
   },
   {
     id: 'calculator',
+    image: '/onboarding_calculator.png',
     title: 'Smart Financial Calculators',
     description:
       'Access all financial calculators like EMI, SIP, Loan and Investment planners to make better decisions.',
   },
   {
     id: 'insights',
+    image: '/onboarding_insights.png',
     title: 'Financial Insights',
     description:
       'Get personalized insights, tips and analytics to grow your money smarter.',
   },
   {
     id: 'growth',
+    image: '/onboarding_growth.png',
     title: 'Track & Grow Your Finances',
     description:
       'Check your credit score and explore products like loans, insurance and investments easily.',
@@ -103,6 +107,22 @@ export default function LoginPage({ onGetStarted }) {
   const canSubmit = digits.length === 10 && agreed
   const isLast = activeIndex === ONBOARDING_SLIDES.length - 1
 
+  // Auto-slide every 3 seconds
+  useEffect(() => {
+    if (phase !== 'onboarding' || dragging) return
+
+    const interval = setInterval(() => {
+      setActiveIndex((current) => {
+        if (current === ONBOARDING_SLIDES.length - 1) {
+          return 0 // Loop back to start
+        }
+        return current + 1
+      })
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [phase, dragging])
+
   const nextSlide = () => {
     if (isLast) {
       setPhase('form')
@@ -151,11 +171,18 @@ export default function LoginPage({ onGetStarted }) {
                   <span className="feOnboarding__brandFin">Fin</span>
                   <span className="feOnboarding__brandXpert">Exprt</span>
                 </div>
-                <div className="feOnboarding__iconWrap" aria-hidden="true">
-                  <OnboardIcon id={slide.id} />
+                <div className="feOnboarding__heroWrap" aria-hidden="true">
+                  <img 
+                    src={slide.image} 
+                    alt={slide.title} 
+                    className="feOnboarding__heroImg"
+                  />
+                  <div className="feOnboarding__heroGlow" />
                 </div>
-                <h1 className="feOnboarding__title">{slide.title}</h1>
-                <p className="feOnboarding__desc">{slide.description}</p>
+                <div className="feOnboarding__content">
+                  <h1 className="feOnboarding__title">{slide.title}</h1>
+                  <p className="feOnboarding__desc">{slide.description}</p>
+                </div>
               </article>
             ))}
           </div>
@@ -182,49 +209,53 @@ export default function LoginPage({ onGetStarted }) {
 
   return (
     <section className="feLoginPage" aria-label="Login form">
-      <div className="feLoginPage__brand" aria-label="FinExprt">
-        <span className="feLoginPage__brandFin">Fin</span>
-        <span className="feLoginPage__brandXpert">Exprt</span>
+      <div className="feLoginPage__header">
+        <div className="feLoginPage__brand" aria-label="FinExprt">
+          <span className="feLoginPage__brandFin">Fin</span>
+          <span className="feLoginPage__brandXpert">Exprt</span>
+        </div>
       </div>
 
-      <h1 className="feLoginPage__title">Start your financial journey</h1>
+      <div className="feLoginPage__formCard">
+        <h1 className="feLoginPage__title">Start your financial journey</h1>
 
-      <label className="feLoginField">
-        <span className="feLoginField__label">Mobile Number*</span>
-        <div className="feLoginField__inputWrap">
-          <span className="feLoginField__icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.4 2.5a2 2 0 0 1-.6 1.8l-1.1 1.1a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 1.8-.6l2.5.4A2 2 0 0 1 22 16.9z" />
-            </svg>
+        <label className="feLoginField">
+          <span className="feLoginField__label">Mobile Number*</span>
+          <div className="feLoginField__inputWrap">
+            <span className="feLoginField__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.4 2.5a2 2 0 0 1-.6 1.8l-1.1 1.1a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 1.8-.6l2.5.4A2 2 0 0 1 22 16.9z" />
+              </svg>
+            </span>
+            <input
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel"
+              maxLength={10}
+              value={digits}
+              placeholder="Enter 10 digit number"
+              onChange={(e) => setMobile(e.target.value)}
+            />
+          </div>
+          <span className="feLoginField__count">{digits.length}/10</span>
+        </label>
+
+        <label className="feLoginCheck">
+          <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
+          <span>
+            I agree to the <button type="button">Terms & Conditions</button> and <button type="button">Privacy Policy</button> and to receive regular communication.
           </span>
-          <input
-            type="tel"
-            inputMode="numeric"
-            autoComplete="tel"
-            maxLength={10}
-            value={digits}
-            placeholder="Mobile Number"
-            onChange={(e) => setMobile(e.target.value)}
-          />
-        </div>
-        <span className="feLoginField__count">{digits.length}/10</span>
-      </label>
+        </label>
 
-      <label className="feLoginCheck">
-        <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
-        <span>
-          I agree to the <button type="button">Terms & Conditions</button> and <button type="button">Privacy Policy</button> and to receive regular communication.
-        </span>
-      </label>
-
-      <button
-        type="button"
-        className="feLoginPage__cta"
-        disabled={!canSubmit}
-        onClick={() => onGetStarted?.({ mobile: digits })}
-      >
-        Get Started
-      </button>
+        <button
+          type="button"
+          className="feLoginPage__cta"
+          disabled={!canSubmit}
+          onClick={() => onGetStarted?.({ mobile: digits })}
+        >
+          Get Started
+        </button>
+      </div>
     </section>
   )
 }

@@ -50,7 +50,7 @@ function Icon({ name }) {
   }
 }
 
-export default function SavingsPlansPage() {
+export default function SavingsPlansPage({ onApply }) {
   const plans = useMemo(
     () => [
       {
@@ -112,7 +112,7 @@ export default function SavingsPlansPage() {
                 type="button"
                 className="feBtn feBtn--primary feBtn--full"
                 onClick={() => {
-                  if (typeof window !== 'undefined') window.location.hash = '#/application_form'
+                  if (onApply) onApply(`Apply for ${p.title}`, 'Start building your future savings today')
                 }}
               >
                 Start Saving

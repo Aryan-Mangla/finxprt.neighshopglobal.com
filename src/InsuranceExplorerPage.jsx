@@ -5,7 +5,7 @@ function formatINR(value) {
   return `₹${rounded.toLocaleString('en-IN')}`
 }
 
-export default function InsuranceExplorerPage({ typeId = 'health' }) {
+export default function InsuranceExplorerPage({ typeId = 'health', onApply }) {
   const [maxPrice, setMaxPrice] = useState(2500)
   const [coverage, setCoverage] = useState(500000)
 
@@ -88,7 +88,10 @@ export default function InsuranceExplorerPage({ typeId = 'health' }) {
                 type="button"
                 className="feBtn feBtn--primary feBtn--full"
                 onClick={() => {
-                  if (typeof window !== 'undefined') window.location.hash = '#/application_form'
+                  const cleanTitle = title.replace(' Plans', '')
+                  if (onApply) {
+                    onApply(`Apply for ${cleanTitle}`, `${p.name} Plan • ${formatINR(p.cover)} cover`)
+                  }
                 }}
               >
                 Buy Now

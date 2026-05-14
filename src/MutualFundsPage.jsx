@@ -131,7 +131,7 @@ const GOALS = [
   { id: 'debt', label: 'Debt free', ring: 'amber' },
 ]
 
-export default function MutualFundsPage({ onNavigate }) {
+export default function MutualFundsPage({ onNavigate, onApply }) {
   const go = (route) => {
     if (onNavigate) onNavigate(route)
     else if (typeof window !== 'undefined') window.location.hash = `#/${route}`
@@ -480,7 +480,13 @@ export default function MutualFundsPage({ onNavigate }) {
               ))}
             </ul>
 
-            <button type="button" className="feMfHub__openAcct" onClick={() => go('application_form')}>
+            <button 
+              type="button" 
+              className="feMfHub__openAcct" 
+              onClick={() => {
+                if (onApply) onApply('Open Mutual Fund Account', 'Instant KYC & paperless onboarding');
+              }}
+            >
               Open account
               <span className="feMfHub__openAcctIcon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -661,7 +667,7 @@ export default function MutualFundsPage({ onNavigate }) {
                 className="feMfHub__lockCta"
                 onClick={() => {
                   setBasketLockedOpen(false)
-                  go('application_form')
+                  if (onApply) onApply('Unlock Mutual Fund Baskets', 'Complete onboarding to access expert-curated goal baskets')
                 }}
               >
                 Onboard Now

@@ -28,8 +28,7 @@ export default function SipInvestmentPage({ onInvestNow }) {
   }
 
   const goStarted = () => {
-    if (onInvestNow) onInvestNow()
-    else if (typeof window !== 'undefined') window.location.hash = '#/application_form'
+    if (onInvestNow) onInvestNow('Apply for SIP Investment', 'Plan your wealth with precision')
   }
 
   const investLabel = frequency === 'monthly' ? 'Investment amount (₹)' : 'Yearly investment (₹)'

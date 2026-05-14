@@ -17,7 +17,7 @@ function principalFromEmi(emi, annualRatePct, years) {
   return (emi * (1 - Math.pow(1 + r, -n))) / r
 }
 
-export default function EligibilityFormPage() {
+export default function EligibilityFormPage({ onApply }) {
   const [salary, setSalary] = useState('')
   const [currentEmi, setCurrentEmi] = useState('')
   const [rate, setRate] = useState('')
@@ -70,7 +70,11 @@ export default function EligibilityFormPage() {
   }
 
   const goApply = () => {
-    if (typeof window !== 'undefined') window.location.hash = '#/application_form'
+    if (onApply) {
+      onApply('Apply for Loan', 'Check eligibility across verified partners')
+    } else if (typeof window !== 'undefined') {
+      window.location.hash = '#/application_form'
+    }
   }
 
   const onCalculate = () => {

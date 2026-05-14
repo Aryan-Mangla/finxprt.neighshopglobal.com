@@ -17,10 +17,38 @@ import {
   Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback, memo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './Taxation.css';
 
 // Static Data
+const BANNERS = [
+  {
+    id: 1,
+    title: 'Fastest ITR Filing',
+    subtitle: 'Trusted by 50,000+ professionals.',
+    cta: 'File Now',
+    bg: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+    icon: FileText,
+  },
+  {
+    id: 2,
+    title: 'Secure Your Future',
+    subtitle: 'Plan taxes & save up to Rs 1.5 Lakh.',
+    cta: 'Plan Now',
+    bg: 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)',
+    icon: ShieldCheck,
+  },
+  {
+    id: 3,
+    title: 'GST Compliance',
+    subtitle: 'Expert filing for your business growth.',
+    cta: 'Manage GST',
+    bg: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+    icon: BarChart3,
+  },
+];
+
 const SERVICES = [
   { id: 'itr', title: 'ITR Filing', icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50', desc: 'Secure and accurate Income Tax Return filing.' },
   { id: 'gst', title: 'GST Filing', icon: BarChart3, color: 'text-emerald-600', bg: 'bg-emerald-50', desc: 'Manage your GST compliance with ease.' },
@@ -112,6 +140,62 @@ const ExpertCard = memo(({ onSelect }) => (
   </section>
 ));
 
+const BannerSlider = memo(({ onSelect }) => {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % BANNERS.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const currentBanner = BANNERS[current];
+  const Icon = currentBanner.icon;
+
+  return (
+    <div className="tax-banner-slider">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={current}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -40 }}
+          className="tax-banner-slide"
+          style={{ background: currentBanner.bg }}
+        >
+          <div className="tax-banner-top">
+            <div className="tax-banner-copy">
+              <h3 className="tax-banner-title">{currentBanner.title}</h3>
+              <p className="tax-banner-subtitle">{currentBanner.subtitle}</p>
+            </div>
+            <div className="tax-banner-icon" aria-hidden="true">
+              <Icon className="tax-banner-icon-svg" size={22} />
+            </div>
+          </div>
+          <div className="tax-banner-footer">
+            <button type="button" onClick={() => onSelect(currentBanner.title)} className="tax-banner-cta">
+              {currentBanner.cta}
+            </button>
+            <div className="tax-banner-dots" role="tablist" aria-label="Banner slides">
+              {BANNERS.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setCurrent(i)}
+                  className={`tax-banner-dot ${i === current ? 'is-active' : ''}`}
+                  aria-label={`Go to slide ${i + 1}`}
+                  aria-current={i === current || undefined}
+                />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+});
+
 const NavItem = memo(({ id, active, icon: Icon, label, onClick }) => (
   <button onClick={() => onClick(id)} className={`tax-nav-item ${active ? 'is-active' : ''}`}>
     <Icon size={22} strokeWidth={active ? 2.5 : 2} />
@@ -122,7 +206,7 @@ const NavItem = memo(({ id, active, icon: Icon, label, onClick }) => (
 const ConsultationModal = memo(({ service, isSubmitted, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({ name: '', number: '', pincode: '' });
 
-  return (
+  const modalContent = (
     <div className="tax-modal-overlay">
       <motion.div 
         initial={{ opacity: 0 }}
@@ -132,9 +216,9 @@ const ConsultationModal = memo(({ service, isSubmitted, onClose, onSubmit }) => 
         className="tax-modal-backdrop"
       />
       <motion.div 
-        initial={{ y: '100%', opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: '100%', opacity: 0 }}
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         className="tax-modal-sheet"
       >
@@ -229,6 +313,8 @@ const ConsultationModal = memo(({ service, isSubmitted, onClose, onSubmit }) => 
       </motion.div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 });
 
 export default function TaxationScreen({ onBack }) {
@@ -259,20 +345,7 @@ export default function TaxationScreen({ onBack }) {
       <div className="taxation-screen-inner">
         {/* Main Content */}
         <main className="taxation-main">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="tax-hero-card"
-          >
-            <div className="relative z-10">
-              <p className="tax-hero-kicker">Secure & Professional</p>
-              <h4 className="tax-hero-title">India's Trusted <br />Tax Filing Platform</h4>
-              <button className="tax-hero-btn">
-                Start Analysis
-              </button>
-            </div>
-            <Zap size={64} className="tax-hero-icon-bg" />
-          </motion.div>
+          <BannerSlider onSelect={handleServiceSelect} />
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">

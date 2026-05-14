@@ -83,7 +83,7 @@ function Icon({ name }) {
   }
 }
 
-export default function InsurancePage({ onSelectType, onExplore }) {
+export default function InsurancePage({ onSelectType, onExplore, onBookMeeting }) {
   const ChevronRight = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M9 18l6-6-6-6" />
@@ -204,7 +204,7 @@ export default function InsurancePage({ onSelectType, onExplore }) {
         <div className="feInsAdvice">
           <div className="feInsAdvice__kicker">EXPERT ADVICE</div>
           <div className="feInsAdvice__title">Choose your insurance with IRDA certified expert</div>
-          <button type="button" className="feInsAdvice__btn">
+          <button type="button" className="feInsAdvice__btn" onClick={onBookMeeting}>
             Book Meeting <span aria-hidden="true">🗓</span>
           </button>
         </div>

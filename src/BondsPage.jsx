@@ -60,110 +60,44 @@ function RiskPill({ level }) {
   return <span className={`feBadge feBadge--${tone}`}>Risk: {level}</span>
 }
 
-export default function BondsPage() {
-  const types = useMemo(
-    () => [
-      {
-        id: 'gov',
-        title: 'Government Bonds',
-        desc: 'Backed by the government. Typically lower risk.',
-        icon: 'gov',
-      },
-      {
-        id: 'corp',
-        title: 'Corporate Bonds',
-        desc: 'Higher yields from top-rated companies.',
-        icon: 'corp',
-      },
-      {
-        id: 'taxfree',
-        title: 'Tax-Free Bonds',
-        desc: 'Interest income may be tax-exempt for eligible bonds.',
-        icon: 'taxfree',
-      },
-    ],
-    [],
-  )
-
-  const bonds = useMemo(
-    () => [
-      { id: 'b1', name: 'Govt. G-Sec 2029', rate: 7.2, years: 5, risk: 'Low', type: 'gov' },
-      { id: 'b2', name: 'AAA Corporate Bond 2028', rate: 8.6, years: 4, risk: 'Medium', type: 'corp' },
-      { id: 'b3', name: 'Tax-Free Infra Bond 2032', rate: 7.8, years: 7, risk: 'Low', type: 'taxfree' },
-      { id: 'b4', name: 'Govt. Savings Bond 2031', rate: 7.4, years: 6, risk: 'Low', type: 'gov' },
-      { id: 'b5', name: 'Corporate Bond (Top Bank) 2027', rate: 8.1, years: 3, risk: 'Medium', type: 'corp' },
-    ],
-    [],
-  )
-
-  const [activeType, setActiveType] = useState('gov')
-
-  const filtered = useMemo(() => bonds.filter((b) => b.type === activeType), [activeType, bonds])
-
+export default function BondsPage({ onApply }) {
   return (
-    <div className="feBonds" aria-label="Bonds Investment">
-      <div className="feBondsIntro">
-        <div className="feBondsIntro__title">Invest in safe and stable bonds</div>
-        <div className="feBondsInfo">
-          <span className="feBondsInfo__dot" aria-hidden="true" />
-          <span>
-            Diversify with fixed-income options. Returns are indicative and may vary.
-          </span>
+    <div className="feCibilPage" aria-label="Bonds coming soon">
+      <section className="feCibilSoon" aria-label="Bonds coming soon card">
+        <div className="feCibilSoon__badge" aria-hidden="true">
+          <span className="feCibilSoon__dot" />
+          SECURE INVESTMENTS
         </div>
-      </div>
-
-      <div className="feBondsTypes" role="tablist" aria-label="Bond types">
-        {types.map((t) => {
-          const isActive = t.id === activeType
-          return (
-            <button
-              key={t.id}
-              type="button"
-              className={`feBondsType ${isActive ? 'is-active' : ''}`}
-              onClick={() => setActiveType(t.id)}
-              role="tab"
-              aria-selected={isActive}
-            >
-              <span className={`feBondsType__icon feBondsType__icon--${t.id}`} aria-hidden="true">
-                <Icon name={t.icon} />
-              </span>
-              <span className="feBondsType__title">{t.title}</span>
-              <span className="feBondsType__desc">{t.desc}</span>
-              <span className="feBondsType__cta">View</span>
-            </button>
-          )
-        })}
-      </div>
-
-      <div className="feBondsList" aria-label="Bond list">
-        {filtered.map((b) => (
-          <div key={b.id} className="feBondsCard" role="article" aria-label={b.name}>
-            <div className="feBondsCard__top">
-              <div className="feBondsCard__name">{b.name}</div>
-              <RiskPill level={b.risk} />
-            </div>
-            <div className="feBondsCard__rows">
-              <div className="feBondsMetric">
-                <div className="feBondsMetric__k">Interest Rate</div>
-                <div className="feBondsMetric__v">{b.rate.toFixed(1)}%</div>
-              </div>
-              <div className="feBondsMetric">
-                <div className="feBondsMetric__k">Duration</div>
-                <div className="feBondsMetric__v">{b.years} years</div>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="feBtn feBtn--primary feBtn--full"
-              onClick={() => {
-                if (typeof window !== 'undefined') window.location.hash = '#/application_form'
-              }}
-            >
-              Invest Now
-            </button>
-          </div>
-        ))}
-      </div>
+        <div className="feCibilSoon__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            <circle cx="12" cy="16" r="1.5" />
+          </svg>
+        </div>
+        <div className="feCibilSoon__title">
+          Bonds <span className="feCibilSoon__titleAccent">Soon</span>
+        </div>
+        <div className="feCibilSoon__sub">
+          We are building a premium marketplace for high-yield corporate and government bonds with institutional-grade security.
+        </div>
+        <div className="feCibilSoon__points" aria-label="Upcoming Bonds features">
+          <span className="feCibilSoon__point">High-Yield Corporate Bonds</span>
+          <span className="feCibilSoon__point">Tax-Free Govt. Securities</span>
+          <span className="feCibilSoon__point">Zero-Commission Investing</span>
+          <span className="feCibilSoon__point">Bank-Grade Asset Security</span>
+        </div>
+        <button 
+          type="button" 
+          className="feBtn feBtn--primary feBtn--full" 
+          style={{ marginTop: '8px' }}
+          onClick={() => {
+            if (onApply) onApply('Early Access: Bonds', 'Join the waitlist for premium bond offerings')
+          }}
+        >
+          Get Early Access
+        </button>
+      </section>
     </div>
   )
 }
