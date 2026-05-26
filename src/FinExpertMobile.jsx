@@ -1748,6 +1748,8 @@ export default function FinExpertMobile() {
     route !== 'verify_details' &&
     route !== 'terms_conditions' &&
     route !== 'privacy_policy' &&
+    route !== 'cibil' &&
+    route !== 'full_credit_report' &&
     !ROUTES_WITH_SCREEN_BAND.includes(route)
 
   return (
